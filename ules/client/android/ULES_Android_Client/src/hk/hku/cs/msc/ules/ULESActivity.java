@@ -130,11 +130,10 @@ public class ULESActivity extends Activity {
     			
     			if(status.equals("Connection Failed") || status.equals("Reading Json Failed")){
     				Log.e(TAG, status);
-//    				new AlertDialog.Builder(context).setTitle(status)
-//    												.setPositiveButton("Try again later", null)
-//    												.show();
+    				// send a msg to ULESActivityHandler to displays a Toast
     			}else{
-    				
+    				Log.v(TAG, status);
+    				// send a msg to ULESActivityHandler to displays a Toast
     			}
     		}
     	}.start();
