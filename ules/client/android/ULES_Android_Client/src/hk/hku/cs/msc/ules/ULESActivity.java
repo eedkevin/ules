@@ -8,13 +8,17 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public class ULESActivity extends Activity {
 	
@@ -24,23 +28,28 @@ public class ULESActivity extends Activity {
 	public static final String USERNAME = "USERNAME";
 	public static final String PASSWORD = "PASSWORD";
 	
-	public Context context;
+	private Context context;
 	
+	private Handler handler;
+	
+	private ProgressDialog progressDialog;		
+	
+	// UI components
 	private Button btnRequestKey;
-		
-	private String username = "bmw1916";
-	private String password = "123456";
-	
 	private EditText et_username;
 	private EditText et_password;
-	private ProgressDialog progressDialog;
+	
+	// temp data
+	private String username = "bmw1916";
+	private String password = "123456";
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        context = this;        
+        context = getApplication();
+        handler = new ULESActivityHandler(this);
         
         btnRequestKey = (Button) findViewById(R.id.main_btn_request_key);
         btnRequestKey.setOnClickListener(new View.OnClickListener() {
@@ -57,6 +66,15 @@ public class ULESActivity extends Activity {
         
         
     }
+    
+    public Handler getHandler(){
+    	return this.handler;
+    }
+    
+    public void alertConnectionStatus(int status){
+    	Toast.makeText(this, status, 3).show();
+    }
+    
     
     private void requestRandomKey(){
     	
@@ -128,13 +146,23 @@ public class ULESActivity extends Activity {
     			
     			progressDialog.dismiss();
     			
-    			if(status.equals("Connection Failed") || status.equals("Reading Json Failed")){
+    			if(!status.equals(context.getString(R.string.connection_succeeded))){
     				Log.e(TAG, status);
-    				// send a msg to ULESActivityHandler to displays a Toast
+    				Message msg = Message.obtain(handler, R.id.connection_failed);
+    				msg.sendToTarget();
     			}else{
-    				Log.v(TAG, status);
-    				// send a msg to ULESActivityHandler to displays a Toast
+    				Log.e(TAG, status);
+    				Message msg = Message.obtain(handler, R.id.connection_succeeded);
+    				msg.sendToTarget();
     			}
+    			
+//    			if(status.equals("Connection Failed") || status.equals("Reading Json Failed")){
+//    				Log.e(TAG, status);
+//    				// send a msg to ULESActivityHandler to displays a Toast
+//    			}else{
+//    				Log.v(TAG, status);
+//    				// send a msg to ULESActivityHandler to displays a Toast
+//    			}
     		}
     	}.start();
     }

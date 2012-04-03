@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item type="id" name="request_random_key"></item>
+    <item type="id" name="connection_failed"></item>
+    <item type="id" name="connection_succeeded"></item>
+    <item type="id" name="failed_reading_json"></item>
 </resources>

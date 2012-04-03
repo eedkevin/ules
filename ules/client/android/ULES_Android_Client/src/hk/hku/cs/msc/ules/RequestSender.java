@@ -25,6 +25,8 @@ import android.util.Log;
 public class RequestSender {
 	public static final String TAG = "RequestSender";
 	
+
+	
 	public static String requestRandomKey(String url, String username, String password){
 		Log.v(TAG, "requestRandomKey");
 		
@@ -55,7 +57,7 @@ public class RequestSender {
 			return "Connection Failed";
 		}
 		
-		status = "Reading Json Failed";
+		status = "Failed Reading Json";
 		try {
 			JSONObject json = new JSONObject(line);
 			status = json.getString("status");
