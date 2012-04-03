@@ -4,4 +4,7 @@
     <string name="hello">Hello World, ULESActivity!</string>
     <string name="app_name">ULES</string>
 	
+    <string name="connection_succeeded">Connection Succeeded</string>
+    <string name="connection_failed">Connection Failed</string>
+    <string name="failed_reading_json">Failed Reading Json</string>
 </resources>
