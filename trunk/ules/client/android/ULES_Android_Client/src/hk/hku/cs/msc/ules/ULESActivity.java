@@ -3,12 +3,10 @@ package hk.hku.cs.msc.ules;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -62,7 +60,7 @@ public class ULESActivity extends Activity {
 		});
         
         // Set default value for server address
-        ((ULESApplication)getApplication()).setGlobalServerAddress(getResources().getString(R.string.server_default_address));
+        ((ULESApplication)getApplication()).setServerAddress(getResources().getString(R.string.server_default_address));
         
         
     }
@@ -73,6 +71,11 @@ public class ULESActivity extends Activity {
     
     public void alertConnectionStatus(int status){
     	Toast.makeText(this, status, 3).show();
+    }
+    
+    public void requestMountKey(String randomKey){
+    	Log.v(TAG+" requestMountKey", "random key: "+ randomKey);
+    	
     }
     
     
@@ -133,11 +136,20 @@ public class ULESActivity extends Activity {
     	Log.v(TAG+" getSavedPassword", "username: "+username+" password: "+password);
     }
     
+    private void doRequestMountKey(String randomKey){
+    	Log.v(TAG,"doRequestMountKey");
+    	progressDialog = ProgressDialog.show(this, "Connecting to Server", "Please wait a second");
+    	
+    	final String url = ((ULESApplication)getApplication()).getServerAddress() + "mountkey";
+    	
+    	
+    }
+    
     private void doRequestRandomKey(){
     	Log.v(TAG,"doRequestRandomKey");
     	progressDialog = ProgressDialog.show(this, "Connecting to Server", "Please wait a second");
     	
-    	final String url = "http://147.8.82.145:8080/" + "randomkey";
+    	final String url = ((ULESApplication)getApplication()).getServerAddress() + "randomkey";
     	
     	// start a new thread to connect the web server
     	new Thread(){
@@ -145,6 +157,7 @@ public class ULESActivity extends Activity {
     			String status = RequestSender.requestRandomKey(url, username, password);
     			
     			progressDialog.dismiss();
+    			progressDialog = null;
     			
     			if(!status.equals(context.getString(R.string.connection_succeeded))){
     				Log.e(TAG, status);

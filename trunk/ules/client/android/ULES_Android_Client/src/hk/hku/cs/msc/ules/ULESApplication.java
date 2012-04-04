@@ -4,13 +4,13 @@ import android.app.Application;
 
 public class ULESApplication extends Application{
 
-	private String globalServerAddress;
+	private String serverAddress;
 	
-	public String getGlobalServerAddress(){
-		return this.globalServerAddress;
+	public String getServerAddress(){
+		return this.serverAddress;
 	}
 	
-	public void setGlobalServerAddress(String serverAddress){
-		this.globalServerAddress = serverAddress;
+	public void setServerAddress(String serverAddress){
+		this.serverAddress = serverAddress;
 	}
 }
