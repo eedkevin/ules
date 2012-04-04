@@ -20,14 +20,45 @@ import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 
-public class RequestSender {
+public class RequestSender extends Thread{
 	public static final String TAG = "RequestSender";
 	
-
+	private Context context;
 	
-	public static String requestRandomKey(String url, String username, String password){
+	private Handler handler;
+	
+	RequestSender(Context context){
+		this.context = context;
+	}
+	
+	public Handler getHandler(){
+		return this.handler;
+	}
+	
+	@Override
+	public void run(){
+		Looper.prepare();
+		handler = new Handler(){
+			@Override
+			public void handleMessage(Message message){
+				switch(message.what){
+				case R.id.request_random_key:
+					Log.v(TAG, "request random key");
+					requestRandomKey();
+					
+				}
+			}
+		};
+		Looper.loop();
+	}
+	
+	protected String requestRandomKey(String url, String username, String password){
 		Log.v(TAG, "requestRandomKey");
 		
 		String status;
@@ -69,7 +100,7 @@ public class RequestSender {
 	}
 	
 	
-	private static String readResponse(HttpResponse httpResponse) {
+	private String readResponse(HttpResponse httpResponse) {
 		String line = null;
 		String status = null;
 
