@@ -1,5 +1,6 @@
 package hk.hku.cs.msc.ules;
 
+import hk.hku.cs.msc.ules.dto.RequestData;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -80,48 +81,16 @@ public class ULESActivity extends Activity {
     
     
     private void requestRandomKey(){
-    	
 //    	getSavedPassword();
     	Log.v(TAG+" getSavedPassword", "username: "+username+" password: "+password);
     	
     	if(username.equals("") || password.equals("")){
-    		// Pop up a input dialog requesting for username and password
-//    		new AlertDialog.Builder(this).setTitle("Please input your username and password to login the Server")
-//    									 .setView(new EditText(this))
-////    									 .setView(new EditText(this))
-//    									 .setPositiveButton("Confirm", null)
-//    									 .setNegativeButton("Cancel", null)
-//    									 .show();
-    		
-//    		new hk.hku.cs.msc.ules.util.InputDialog(this).show();
-    		
-    		Builder dialog = new AlertDialog.Builder(this);
-    		LinearLayout layout = (LinearLayout) ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.input_dialog, null);
-    		dialog.setView(layout);
-    		et_username = (EditText) layout.findViewById(R.id.editText_username);
-    		et_password = (EditText) layout.findViewById(R.id.editText_password);
-    		
-    		dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-    		
-    		dialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					// TODO Auto-generated method stub
-					username = et_username.getText().toString().trim();
-					password = et_password.getText().toString().trim();
-					Log.v(TAG, "username: "+username+" password: "+password);
-				}
-			});
-    		dialog.show();
+    		// Pop up a input dialog requesting for username and password    		
+    		buildDialog();
     	}else{
 //    		new AlertDialog.Builder(this).setTitle(username).show();
-    		doRequestRandomKey();
+    		String url = ((ULESApplication)getApplication()).getServerAddress() + "randomkey";
+    		deRequestRandomKey(url);
     	}
     	
     }
@@ -140,46 +109,56 @@ public class ULESActivity extends Activity {
     	Log.v(TAG,"doRequestMountKey");
     	progressDialog = ProgressDialog.show(this, "Connecting to Server", "Please wait a second");
     	
-    	final String url = ((ULESApplication)getApplication()).getServerAddress() + "mountkey";
-    	
-    	
+    	final String url = ((ULESApplication)getApplication()).getServerAddress() + "mountkey";    	
     }
     
-    private void doRequestRandomKey(){
+    private void deRequestRandomKey(String url){
     	Log.v(TAG,"doRequestRandomKey");
-    	progressDialog = ProgressDialog.show(this, "Connecting to Server", "Please wait a second");
     	
-    	final String url = ((ULESApplication)getApplication()).getServerAddress() + "randomkey";
+    	RequestData data = new RequestData();
+    	data.setUsername(username);
+    	data.setPassword(password);
+    	data.setUrl(url);
     	
-    	// start a new thread to connect the web server
-    	new Thread(){
-    		public void run(){
-    			String status = RequestSender.requestRandomKey(url, username, password);
-    			
-    			progressDialog.dismiss();
-    			progressDialog = null;
-    			
-    			if(!status.equals(context.getString(R.string.connection_succeeded))){
-    				Log.e(TAG, status);
-    				Message msg = Message.obtain(handler, R.id.connection_failed);
-    				msg.sendToTarget();
-    			}else{
-    				Log.e(TAG, status);
-    				Message msg = Message.obtain(handler, R.id.connection_succeeded);
-    				msg.sendToTarget();
-    			}
-    			
-//    			if(status.equals("Connection Failed") || status.equals("Reading Json Failed")){
-//    				Log.e(TAG, status);
-//    				// send a msg to ULESActivityHandler to displays a Toast
-//    			}else{
-//    				Log.v(TAG, status);
-//    				// send a msg to ULESActivityHandler to displays a Toast
-//    			}
-    		}
-    	}.start();
+    	showProgressDialog();
+    	getHandler().obtainMessage(R.id.request_random_key, data).sendToTarget();
     }
     
+    protected void showProgressDialog(){
+    	progressDialog = ProgressDialog.show(this, "Connecting to Server", "Please wait a second");
+    }
+    
+    protected void dismissProgressDialog(){
+    	progressDialog.dismiss();
+    	progressDialog = null;
+    }
+
+    private void buildDialog(){
+    	Builder dialog = new AlertDialog.Builder(this);
+		LinearLayout layout = (LinearLayout) ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.input_dialog, null);
+		dialog.setView(layout);
+		et_username = (EditText) layout.findViewById(R.id.editText_username);
+		et_password = (EditText) layout.findViewById(R.id.editText_password);
+		
+		dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {				
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		dialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {				
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				username = et_username.getText().toString().trim();
+				password = et_password.getText().toString().trim();
+				Log.v(TAG, "username: "+username+" password: "+password);
+			}
+		});
+		dialog.show();
+    }    
     
     
     

@@ -13,4 +13,5 @@ public class ULESApplication extends Application{
 	public void setServerAddress(String serverAddress){
 		this.serverAddress = serverAddress;
 	}
+
 }
