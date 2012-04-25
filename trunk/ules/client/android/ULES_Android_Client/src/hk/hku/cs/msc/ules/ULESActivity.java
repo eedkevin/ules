@@ -39,7 +39,7 @@ public class ULESActivity extends Activity {
 	private EditText et_password;
 	
 	// temp data
-	private String username = "bmw1916";
+	protected String username = "bmw1916";
 	private String password = "123456";
 	
     /** Called when the activity is first created. */

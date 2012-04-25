@@ -1,5 +1,7 @@
 package hk.hku.cs.msc.ules;
 
+import hk.hku.cs.msc.ules.dto.RequestData;
+import hk.hku.cs.msc.ules.dto.SMSData;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -34,8 +36,9 @@ public class ULESActivityHandler extends Handler{
 				break;
 			case R.id.sms_received:
 				Log.v(TAG,"sms received");
-				String url = ((ULESApplication)activity.getApplication()).getServerAddress() + "mountkey";
-				requestSender.getHandler().obtainMessage(R.id.request_mount_key, message.obj).sendToTarget();
+				String url = ((ULESApplication)activity.getApplication()).getServerAddress() + "getmountkey.jsp";
+				RequestData data = new RequestData(activity.username, url, (String)message.obj);
+				requestSender.getHandler().obtainMessage(R.id.request_mount_key, data).sendToTarget();
 			case R.id.dismiss_progress_dialog:
 				Log.v(TAG,"dismiss progress dialog");
 				activity.dismissProgressDialog();

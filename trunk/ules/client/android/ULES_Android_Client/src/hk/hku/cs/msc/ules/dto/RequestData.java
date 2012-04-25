@@ -13,6 +13,20 @@ public class RequestData {
 		super();
 	}
 
+	public RequestData(String url, String randomKey) {
+		super();
+		this.url = url;
+		this.randomKey = randomKey;
+	}
+	
+
+	public RequestData(String username, String url, String randomKey) {
+		super();
+		this.username = username;
+		this.url = url;
+		this.randomKey = randomKey;
+	}
+
 	public String getUsername() {
 		return username;
 	}

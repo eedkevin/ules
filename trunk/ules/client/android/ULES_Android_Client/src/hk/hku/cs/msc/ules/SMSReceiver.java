@@ -1,5 +1,6 @@
 package hk.hku.cs.msc.ules;
 
+import hk.hku.cs.msc.ules.dto.SMSData;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +13,7 @@ import android.util.Log;
 public class SMSReceiver extends BroadcastReceiver {
 	public final static String TAG = "SMSReceiver";
 	
-	private Context context;
+	private ULESActivity context;
 	
 	private Handler handler;
 	
@@ -21,7 +22,7 @@ public class SMSReceiver extends BroadcastReceiver {
 		Log.v(TAG,"SMSReceiver create");
 	}	
 	
-	public SMSReceiver(Context context){
+	public SMSReceiver(ULESActivity context){
 		super();
 		Log.v(TAG,"SMSReceiver create");
 		this.context = context;
@@ -48,14 +49,33 @@ public class SMSReceiver extends BroadcastReceiver {
 			
 			for(SmsMessage message: smsMessages){
 				if(message.getOriginatingAddress().equals("UFLEServer")){
-					Log.v(TAG, "one SMS from ULES received");
-					String content = message.getMessageBody();
+					Log.v(TAG, "one SMS from UFLEServer received");
 					
-					// content is the random key
-					Message msg = Message.obtain(((ULESActivity) context).getHandler(), R.id.sms_received, content);
-					msg.sendToTarget();
+					SMSData data = this.buildSMSData(message);
+					if(data.getFrom().equals("laptop")){
+						Log.v(TAG, "ignore this SMS as it's requested from laptop");
+						// do nothing, as the laptop application has internet connection and could access the web server itselft
+					}else{
+						// the content is the random key
+						Message.obtain(this.context.getHandler(), R.id.sms_received, data.getContent()).sendToTarget();						
+					}
+					
 				}
 			}
 		}
+	}
+	
+	private SMSData buildSMSData(SmsMessage message){
+		String sender;
+		String from;
+		String content;		// the random key
+		
+		sender = message.getOriginatingAddress();
+		
+		String[] str = message.getMessageBody().split(":");
+		from = str[0].trim();
+		content = str[1].trim();
+		
+		return new SMSData(sender, from, content);
 	}
 }

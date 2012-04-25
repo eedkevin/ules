@@ -22,19 +22,16 @@ import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
 import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
 
 public class RequestSender extends Thread{
 	public static final String TAG = "RequestSender";
 	
-	private Context context;
+	private ULESActivity context;
 	private Handler handler;
 	
-	RequestSender(Context context){
+	RequestSender(ULESActivity context){
 		this.context = context;
 		handler = new RequestSenderHandler(this);
 	}
@@ -44,11 +41,15 @@ public class RequestSender extends Thread{
 	}
 	
 	protected String requestRandomKey(RequestData data){
-		return null;
+		return requestRandomKey(data.getUrl(), data.getUsername(), data.getPassword());
+	}
+	
+	protected String requestMountKey(RequestData data){
+		return requestMountKey(data.getUsername(), data.getUrl(), data.getRandomKey());
 	}
 	
 	
-	protected String requestRandomKey(String url, String username, String password){
+	private String requestRandomKey(String url, String username, String password){
 		String status;
 		
 		HttpClient httpClient = new DefaultHttpClient();
@@ -87,33 +88,31 @@ public class RequestSender extends Thread{
 		return status;
 	}
 	
-//	protected String requestMountKey(String randomKey){
-//		String mountKey;
-//		
-//		String url = ((ULESApplication)getApplication()).getServerAddress() + "mountkey";
-//		
-//		HttpClient httpClient = new DefaultHttpClient();
-//		HttpPost httpPost = new HttpPost(url);
-//		List<NameValuePair> params = new ArrayList<NameValuePair>();
-//		params.add(new BasicNameValuePair("username", username));
-//		params.add(new BasicNameValuePair("password", password));
-//
-//		String line = null;
-//		try{
-//			httpPost.setEntity(new UrlEncodedFormEntity(params));
-//			HttpResponse httpResponse = httpClient.execute(httpPost);
-//			line = readResponse(httpResponse);
-//		} catch(UnsupportedEncodingException e){
-//			e.printStackTrace();
-//		} catch(ClientProtocolException e){
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			Log.e(TAG,"Could not establish a HTTP connection to the server or could not get a response properly from the server.",e);
-//			e.printStackTrace();
-//		}		
-//	}
-	
+	private String requestMountKey(String username, String url, String randomKey){
+		
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpPost httpPost = new HttpPost(url);
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("username", username));
+		params.add(new BasicNameValuePair("sms", randomKey));
+
+		String line = null;
+		try{
+			httpPost.setEntity(new UrlEncodedFormEntity(params));
+			HttpResponse httpResponse = httpClient.execute(httpPost);
+			line = readResponse(httpResponse);
+		} catch(UnsupportedEncodingException e){
+			e.printStackTrace();
+		} catch(ClientProtocolException e){
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			Log.e(TAG,"Could not establish a HTTP connection to the server or could not get a response properly from the server.",e);
+			e.printStackTrace();
+		}		
+		
+		return line;
+	}
 	
 	private String readResponse(HttpResponse httpResponse) {
 		String line = null;

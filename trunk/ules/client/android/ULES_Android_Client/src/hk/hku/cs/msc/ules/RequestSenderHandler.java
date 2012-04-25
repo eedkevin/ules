@@ -22,6 +22,8 @@ public class RequestSenderHandler extends Handler{
 				sender.requestRandomKey((RequestData)message.obj);
 			case R.id.request_mount_key:
 				Log.v(TAG, "request_mount_key");
+				sender.requestMountKey((RequestData)message.obj);
+				
 		}
 	}
 }
