@@ -16,7 +16,13 @@ public class SMSReceiver extends BroadcastReceiver {
 	
 	private Handler handler;
 	
-	SMSReceiver(Context context){
+	public SMSReceiver(){
+		super();
+		Log.v(TAG,"SMSReceiver create");
+	}	
+	
+	public SMSReceiver(Context context){
+		super();
 		Log.v(TAG,"SMSReceiver create");
 		this.context = context;
 	}
@@ -28,6 +34,8 @@ public class SMSReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		// TODO Auto-generated method stub
+		Log.v(TAG,"onReceive");
+		
 		Bundle bundle = intent.getExtras();
 		Object[] messages = (Object[]) bundle.get("pdus");
 		
@@ -39,7 +47,7 @@ public class SMSReceiver extends BroadcastReceiver {
 			}
 			
 			for(SmsMessage message: smsMessages){
-				if(message.getOriginatingAddress().equals("ULES")){
+				if(message.getOriginatingAddress().equals("UFLEServer")){
 					Log.v(TAG, "one SMS from ULES received");
 					String content = message.getMessageBody();
 					

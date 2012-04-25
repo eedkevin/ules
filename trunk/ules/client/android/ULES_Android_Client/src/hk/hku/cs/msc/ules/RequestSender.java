@@ -1,5 +1,7 @@
 package hk.hku.cs.msc.ules;
 
+import hk.hku.cs.msc.ules.dto.RequestData;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,37 +32,23 @@ public class RequestSender extends Thread{
 	public static final String TAG = "RequestSender";
 	
 	private Context context;
-	
 	private Handler handler;
 	
 	RequestSender(Context context){
 		this.context = context;
+		handler = new RequestSenderHandler(this);
 	}
 	
 	public Handler getHandler(){
 		return this.handler;
 	}
 	
-	@Override
-	public void run(){
-		Looper.prepare();
-		handler = new Handler(){
-			@Override
-			public void handleMessage(Message message){
-				switch(message.what){
-				case R.id.request_random_key:
-					Log.v(TAG, "request random key");
-					requestRandomKey();
-					
-				}
-			}
-		};
-		Looper.loop();
+	protected String requestRandomKey(RequestData data){
+		return null;
 	}
 	
+	
 	protected String requestRandomKey(String url, String username, String password){
-		Log.v(TAG, "requestRandomKey");
-		
 		String status;
 		
 		HttpClient httpClient = new DefaultHttpClient();
@@ -98,6 +86,33 @@ public class RequestSender extends Thread{
 		}
 		return status;
 	}
+	
+//	protected String requestMountKey(String randomKey){
+//		String mountKey;
+//		
+//		String url = ((ULESApplication)getApplication()).getServerAddress() + "mountkey";
+//		
+//		HttpClient httpClient = new DefaultHttpClient();
+//		HttpPost httpPost = new HttpPost(url);
+//		List<NameValuePair> params = new ArrayList<NameValuePair>();
+//		params.add(new BasicNameValuePair("username", username));
+//		params.add(new BasicNameValuePair("password", password));
+//
+//		String line = null;
+//		try{
+//			httpPost.setEntity(new UrlEncodedFormEntity(params));
+//			HttpResponse httpResponse = httpClient.execute(httpPost);
+//			line = readResponse(httpResponse);
+//		} catch(UnsupportedEncodingException e){
+//			e.printStackTrace();
+//		} catch(ClientProtocolException e){
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			Log.e(TAG,"Could not establish a HTTP connection to the server or could not get a response properly from the server.",e);
+//			e.printStackTrace();
+//		}		
+//	}
 	
 	
 	private String readResponse(HttpResponse httpResponse) {
