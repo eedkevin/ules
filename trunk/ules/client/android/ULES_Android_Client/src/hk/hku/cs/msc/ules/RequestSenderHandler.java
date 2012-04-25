@@ -19,11 +19,18 @@ public class RequestSenderHandler extends Handler{
 		switch(message.what){
 			case R.id.request_random_key:
 				Log.v(TAG, "request_random_key");
-				sender.requestRandomKey((RequestData)message.obj);
+				String line = sender.requestRandomKey((RequestData)message.obj);
+				if(line == null){
+					((ULESActivity)sender.getContext()).getHandler().obtainMessage(R.id.connection_failed).sendToTarget();
+				}else{
+					((ULESActivity)sender.getContext()).getHandler().obtainMessage(R.id.connection_succeeded).sendToTarget();
+				}
+				break;
 			case R.id.request_mount_key:
 				Log.v(TAG, "request_mount_key");
-				sender.requestMountKey((RequestData)message.obj);
-				
+				String mountkey = sender.requestMountKey((RequestData)message.obj);
+				Log.v(TAG,"mountkey = " + mountkey);
+				break;
 		}
 	}
 }

@@ -11,27 +11,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.apache.http.client.ClientProtocolException;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
 public class RequestSender extends Thread{
 	public static final String TAG = "RequestSender";
 	
-	private ULESActivity context;
+	private Context context;
 	private Handler handler;
 	
-	RequestSender(ULESActivity context){
+	RequestSender(Context context){
 		this.context = context;
 		handler = new RequestSenderHandler(this);
 	}
@@ -40,29 +40,32 @@ public class RequestSender extends Thread{
 		return this.handler;
 	}
 	
+	public Context getContext(){
+		return this.context;
+	}
+	
 	protected String requestRandomKey(RequestData data){
 		return requestRandomKey(data.getUrl(), data.getUsername(), data.getPassword());
+		//return requestRandomKey();
 	}
 	
 	protected String requestMountKey(RequestData data){
-		return requestMountKey(data.getUsername(), data.getUrl(), data.getRandomKey());
+		return requestMountKey(data.getUrl(), data.getUsername(), data.getRandomKey());
 	}
 	
-	
-	private String requestRandomKey(String url, String username, String password){
-		String status;
+	private String requestRandomKey(){
+		
+		String url = "http://192.168.1.16:8080/ufle/getmountkey.jsp?username=kevin&sms=374513";
 		
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = new HttpPost(url);
-		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		params.add(new BasicNameValuePair("username", username));
-		params.add(new BasicNameValuePair("password", password));
 
 		String line = null;
 		try{
-			httpPost.setEntity(new UrlEncodedFormEntity(params));
 			HttpResponse httpResponse = httpClient.execute(httpPost);
-			line = readResponse(httpResponse);
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+				line = readResponseFromRandomKey(httpResponse);
+			}
 		} catch(UnsupportedEncodingException e){
 			e.printStackTrace();
 		} catch(ClientProtocolException e){
@@ -73,22 +76,41 @@ public class RequestSender extends Thread{
 			e.printStackTrace();
 		}
 		
-		if(line == null){
-			return "Connection Failed";
-		}
-		
-		status = "Failed Reading Json";
-		try {
-			JSONObject json = new JSONObject(line);
-			status = json.getString("status");
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return status;
+		return line;	
 	}
 	
-	private String requestMountKey(String username, String url, String randomKey){
+	
+	private String requestRandomKey(String url, String username, String password){
+		
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpPost httpPost = new HttpPost(url);
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("username", username));
+		params.add(new BasicNameValuePair("from", "mobile"));
+
+		String line = null;
+		try{
+			httpPost.setEntity(new UrlEncodedFormEntity(params));
+			HttpResponse httpResponse = httpClient.execute(httpPost);
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+				line = readResponseFromRandomKey(httpResponse);
+			}
+		} catch(UnsupportedEncodingException e){
+			e.printStackTrace();
+		} catch(ClientProtocolException e){
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			Log.e(TAG,"Could not establish a HTTP connection to the server or could not get a response properly from the server.",e);
+			e.printStackTrace();
+		} finally{
+			
+		}
+		
+		return line;
+	}
+	
+	private String requestMountKey(String url, String username, String randomKey){
 		
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = new HttpPost(url);
@@ -100,7 +122,9 @@ public class RequestSender extends Thread{
 		try{
 			httpPost.setEntity(new UrlEncodedFormEntity(params));
 			HttpResponse httpResponse = httpClient.execute(httpPost);
-			line = readResponse(httpResponse);
+			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+				line = readResponseFromMountKey(httpResponse);
+			}
 		} catch(UnsupportedEncodingException e){
 			e.printStackTrace();
 		} catch(ClientProtocolException e){
@@ -110,21 +134,41 @@ public class RequestSender extends Thread{
 			Log.e(TAG,"Could not establish a HTTP connection to the server or could not get a response properly from the server.",e);
 			e.printStackTrace();
 		}		
+		String mountkey = line;
+		return mountkey;
+	}
+	
+	private String readResponseFromRandomKey(HttpResponse httpResponse){
+		String line = null;
 		
+		try { 
+			InputStream content = httpResponse.getEntity().getContent();
+			BufferedReader in = new BufferedReader(new InputStreamReader(content));
+			line = in.readLine();
+
+			in.close();
+
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return line;
 	}
 	
-	private String readResponse(HttpResponse httpResponse) {
+	private String readResponseFromMountKey(HttpResponse httpResponse) {
 		String line = null;
-		String status = null;
 
 		try {
+//			line = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
 			InputStream content = httpResponse.getEntity().getContent();
 			BufferedReader in = new BufferedReader(new InputStreamReader(content));
 			line = in.readLine();
 			
-			JSONObject json = new JSONObject(line);
-			status = json.getString("status");
+			String[] str = line.split("=");
+			line = str[1];
 			
 			in.close();
 
@@ -134,12 +178,9 @@ public class RequestSender extends Thread{
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 
-		return status;
+		return line;
 
 	}	
 }
