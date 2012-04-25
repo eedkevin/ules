@@ -7,6 +7,7 @@ import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +28,8 @@ public class ULESActivity extends Activity {
 	public static final String USERNAME = "USERNAME";
 	public static final String PASSWORD = "PASSWORD";
 	
+	private static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
+	
 	private Context context;
 	
 	private Handler handler;
@@ -39,7 +42,7 @@ public class ULESActivity extends Activity {
 	private EditText et_password;
 	
 	// temp data
-	protected String username = "bmw1916";
+	protected String username = "kevin";
 	private String password = "123456";
 	
     /** Called when the activity is first created. */
@@ -49,6 +52,7 @@ public class ULESActivity extends Activity {
         setContentView(R.layout.main);
         context = getApplication();
         handler = new ULESActivityHandler(this);
+        registerSMSReceiver();
         
         btnRequestKey = (Button) findViewById(R.id.main_btn_request_key);
         btnRequestKey.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +83,12 @@ public class ULESActivity extends Activity {
     	
     }
     
+    private void registerSMSReceiver(){
+    	SMSReceiver receiver = new SMSReceiver(this);
+    	IntentFilter filter = new IntentFilter(ACTION);
+    	filter.setPriority(1000);
+    	registerReceiver(receiver, filter);
+    }
     
     private void requestRandomKey(){
 //    	getSavedPassword();
@@ -89,27 +99,10 @@ public class ULESActivity extends Activity {
     		buildDialog();
     	}else{
 //    		new AlertDialog.Builder(this).setTitle(username).show();
-    		String url = ((ULESApplication)getApplication()).getServerAddress() + "randomkey";
+    		String url = ((ULESApplication)getApplication()).getServerAddress() + "sendsms.jsp";
     		deRequestRandomKey(url);
     	}
     	
-    }
-    
-    // Get the saved username and password
-    private void getSavedPassword(){
-    	
-    	// Restore prederences
-    	SharedPreferences sp = getSharedPreferences(SETTING_INFO, 0);
-    	username = sp.getString(USERNAME, "");
-    	password = sp.getString(PASSWORD, "");
-    	Log.v(TAG+" getSavedPassword", "username: "+username+" password: "+password);
-    }
-    
-    private void doRequestMountKey(String randomKey){
-    	Log.v(TAG,"doRequestMountKey");
-    	progressDialog = ProgressDialog.show(this, "Connecting to Server", "Please wait a second");
-    	
-    	final String url = ((ULESApplication)getApplication()).getServerAddress() + "mountkey";    	
     }
     
     private void deRequestRandomKey(String url){
@@ -161,5 +154,21 @@ public class ULESActivity extends Activity {
     }    
     
     
+//  // Get the saved username and password
+//  private void getSavedPassword(){
+//  	
+//  	// Restore prederences
+//  	SharedPreferences sp = getSharedPreferences(SETTING_INFO, 0);
+//  	username = sp.getString(USERNAME, "");
+//  	password = sp.getString(PASSWORD, "");
+//  	Log.v(TAG+" getSavedPassword", "username: "+username+" password: "+password);
+//  }
     
+    
+//  private void doRequestMountKey(String randomKey){
+//	Log.v(TAG,"doRequestMountKey");
+//	progressDialog = ProgressDialog.show(this, "Connecting to Server", "Please wait a second");
+//	
+//	final String url = ((ULESApplication)getApplication()).getServerAddress() + "mountkey";    	
+//}
 }

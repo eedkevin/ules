@@ -26,12 +26,15 @@ public class ULESActivityHandler extends Handler{
 			case R.id.request_random_key:
 				Log.v(TAG,"request random key");
 				requestSender.getHandler().obtainMessage(R.id.request_random_key, message.obj).sendToTarget();
+				break;
 			case R.id.connection_failed:
 				Log.v(TAG,"connection failed");
+				activity.dismissProgressDialog();
 				activity.alertConnectionStatus(R.string.connection_failed);
 				break;
 			case R.id.connection_succeeded:
 				Log.v(TAG,"connection succeeded");
+				activity.dismissProgressDialog();
 				activity.alertConnectionStatus(R.string.connection_succeeded);
 				break;
 			case R.id.sms_received:
@@ -39,9 +42,7 @@ public class ULESActivityHandler extends Handler{
 				String url = ((ULESApplication)activity.getApplication()).getServerAddress() + "getmountkey.jsp";
 				RequestData data = new RequestData(activity.username, url, (String)message.obj);
 				requestSender.getHandler().obtainMessage(R.id.request_mount_key, data).sendToTarget();
-			case R.id.dismiss_progress_dialog:
-				Log.v(TAG,"dismiss progress dialog");
-				activity.dismissProgressDialog();
+				break;
 		}
 	}
 }
