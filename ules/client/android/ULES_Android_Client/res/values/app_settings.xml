@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <!-- <string name="server_default_address">http://147.8.82.145:8080/</string> -->
-    <string name="server_default_address">http://192.168.1.16:8080/ufle/</string>
+    <string name="server_default_address">http://147.8.82.145:8080/</string>
+    <!-- <string name="server_default_address">http://192.168.1.16:8080/ufle/</string> -->
     
 </resources>

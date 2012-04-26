@@ -165,10 +165,11 @@ public class RequestSender extends Thread{
 //			line = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
 			InputStream content = httpResponse.getEntity().getContent();
 			BufferedReader in = new BufferedReader(new InputStreamReader(content));
-			line = in.readLine();
 			
-			String[] str = line.split("=");
-			line = str[1];
+			String[] str = in.readLine().split("=");
+			if(str.length > 1){
+				line = str[1];
+			}
 			
 			in.close();
 
