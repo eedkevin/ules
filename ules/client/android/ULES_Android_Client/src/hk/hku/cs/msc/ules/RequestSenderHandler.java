@@ -4,6 +4,7 @@ import hk.hku.cs.msc.ules.dto.RequestData;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 public class RequestSenderHandler extends Handler{
 	private final static String TAG = "RequestSenderHandler";
@@ -29,6 +30,7 @@ public class RequestSenderHandler extends Handler{
 			case R.id.request_mount_key:
 				Log.v(TAG, "request_mount_key");
 				String mountkey = sender.requestMountKey((RequestData)message.obj);
+				sender.showToast(mountkey);
 				Log.v(TAG,"mountkey = " + mountkey);
 				break;
 		}

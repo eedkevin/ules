@@ -18,8 +18,8 @@ public class InputDialog extends Dialog{
 		super(context);
 		// TODO Auto-generated constructor stub
 		setContentView(R.layout.input_dialog);
-		username = (EditText) findViewById(R.id.editText_username);
-		password = (EditText) findViewById(R.id.editText_password);
+		username = (EditText) findViewById(R.id.old_editText_username);
+		password = (EditText) findViewById(R.id.old_editText_password);
 		
 //		confirm = (Button) findViewById(R.id.button_confirm);
 //		confirm.setOnClickListener(new View.OnClickListener() {

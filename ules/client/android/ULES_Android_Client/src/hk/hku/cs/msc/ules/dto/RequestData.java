@@ -4,6 +4,7 @@ public class RequestData {
 	
 	private String username;
 	private String password;
+	private String from;
 	
 	private String url;
 	private String randomKey;
@@ -41,6 +42,14 @@ public class RequestData {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public void setFrom(String from){
+		this.from = from;
+	}
+	
+	public String getFrom(){
+		return this.from;
 	}
 
 	public String getUrl() {

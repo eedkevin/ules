@@ -7,13 +7,18 @@ import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Contacts.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,7 +35,7 @@ public class ULESActivity extends Activity {
 	
 	private static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
 	
-	private Context context;
+	private Context mContext;
 	
 	private Handler handler;
 	
@@ -44,13 +49,14 @@ public class ULESActivity extends Activity {
 	// temp data
 	protected String username = "kevin";
 	private String password = "123456";
+	private String from = "mobile";
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        context = getApplication();
+        mContext = getApplication();
         handler = new ULESActivityHandler(this);
         registerSMSReceiver();
         
@@ -68,6 +74,32 @@ public class ULESActivity extends Activity {
         ((ULESApplication)getApplication()).setServerAddress(getResources().getString(R.string.server_default_address));
         
         
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+    	boolean result = super.onCreateOptionsMenu(menu);
+    	SubMenu settingsMenu = menu.addSubMenu(0, Menu.FIRST, Menu.NONE, "Settings"); 
+    	SubMenu helpMenu = menu.addSubMenu(0, Menu.FIRST + 1, Menu.NONE, "Help"); 
+    	//settingsMenu.add(0, Menu.FIRST + 10, Menu.NONE, "Set Server Address");
+    	return result;
+    }
+    
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item){
+    	boolean result = super.onOptionsItemSelected(item);
+    	switch(item.getItemId()){
+    	case Menu.FIRST:
+    		startActivity(new Intent(this, SettingsActivity.class));
+    		break;
+    	case Menu.FIRST + 1:
+    		break;
+    	case Menu.FIRST + 10:
+    		break;
+    	default:
+    		break;
+    	}
+    	return result;
     }
     
     public Handler getHandler(){
@@ -110,7 +142,7 @@ public class ULESActivity extends Activity {
     	
     	RequestData data = new RequestData();
     	data.setUsername(username);
-    	data.setPassword(password);
+    	data.setFrom(from);
     	data.setUrl(url);
     	
     	showProgressDialog();
@@ -131,7 +163,7 @@ public class ULESActivity extends Activity {
 		LinearLayout layout = (LinearLayout) ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.input_dialog, null);
 		dialog.setView(layout);
 		et_username = (EditText) layout.findViewById(R.id.editText_username);
-		et_password = (EditText) layout.findViewById(R.id.editText_password);
+		et_password = (EditText) layout.findViewById(R.id.editText_passowrd);
 		
 		dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {				
 			@Override
