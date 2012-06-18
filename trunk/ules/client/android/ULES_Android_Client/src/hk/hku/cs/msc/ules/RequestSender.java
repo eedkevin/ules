@@ -24,15 +24,16 @@ import org.apache.http.client.ClientProtocolException;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 public class RequestSender extends Thread{
 	public static final String TAG = "RequestSender";
 	
-	private Context context;
+	private Context mContext;
 	private Handler handler;
 	
 	RequestSender(Context context){
-		this.context = context;
+		this.mContext = context;
 		handler = new RequestSenderHandler(this);
 	}
 	
@@ -41,16 +42,20 @@ public class RequestSender extends Thread{
 	}
 	
 	public Context getContext(){
-		return this.context;
+		return this.mContext;
 	}
 	
 	protected String requestRandomKey(RequestData data){
-		return requestRandomKey(data.getUrl(), data.getUsername(), data.getPassword());
+		return requestRandomKey(data.getUrl(), data.getUsername(), data.getFrom());
 		//return requestRandomKey();
 	}
 	
 	protected String requestMountKey(RequestData data){
 		return requestMountKey(data.getUrl(), data.getUsername(), data.getRandomKey());
+	}
+	
+	protected void showToast(String str){
+		Toast.makeText(mContext, str, Toast.LENGTH_LONG).show();
 	}
 	
 	private String requestRandomKey(){
@@ -80,13 +85,13 @@ public class RequestSender extends Thread{
 	}
 	
 	
-	private String requestRandomKey(String url, String username, String password){
+	private String requestRandomKey(String url, String username, String from){
 		
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = new HttpPost(url);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("username", username));
-		params.add(new BasicNameValuePair("from", "mobile"));
+		params.add(new BasicNameValuePair("from", from));
 
 		String line = null;
 		try{
@@ -166,10 +171,14 @@ public class RequestSender extends Thread{
 			InputStream content = httpResponse.getEntity().getContent();
 			BufferedReader in = new BufferedReader(new InputStreamReader(content));
 			
-			String[] str = in.readLine().split("=");
-			if(str.length > 1){
-				line = str[1];
-			}
+//			String[] str = in.readLine().split("=");
+//			if(str.length > 1){
+//				line = str[1];
+//			}
+			char[] arrChar = new char[365];
+			in.read(arrChar);
+			line = new String(arrChar);
+//			line = arrChar.toString();
 			
 			in.close();
 
@@ -184,4 +193,5 @@ public class RequestSender extends Thread{
 		return line;
 
 	}	
+	
 }

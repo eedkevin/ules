@@ -8,11 +8,11 @@
 <TextView
 	android:id="@+id/main_textview_intro"
 	android:layout_width="fill_parent"
-	android:layout_height="223px"
-	android:text="TextView" />
+	android:layout_height="223dp"
+	android:text="@string/direction" />
 <Button
 	android:id="@+id/main_btn_request_key"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
-	android:text="Request for Random key" />
+	android:text="@string/request_random_key" />
 </LinearLayout>

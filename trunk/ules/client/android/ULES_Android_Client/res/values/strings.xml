@@ -4,7 +4,15 @@
     <string name="hello">Hello World, ULESActivity!</string>
     <string name="app_name">ULES</string> 
     
+    <string name="direction">Press the button below to request a random key from server. A SMS will be received a few seconds after a successful connection. The SMS will be read automatically by the app and finish the next few steps itself. Just Keep your mobile network working and wait a second.</string>
+    <string name="request_random_key">Request for Random Key</string>
+    
     <string name="connection_succeeded">Connection Succeeded</string>
     <string name="connection_failed">Connection Failed</string>
     <string name="failed_reading_json">Failed Reading Json</string>
+    
+    <string name="login_succeed">Login Succeed</string>
+    <string name="login_fail">Login Fail</string>
+    <string name="operation_error">Operation Error</string>
+    <string name="user_account_locked">User Account Locked</string>
 </resources>
