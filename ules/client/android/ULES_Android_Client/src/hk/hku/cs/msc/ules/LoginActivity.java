@@ -104,30 +104,34 @@ public class LoginActivity extends Activity{
 		if(line!=null){
 			receiveResponse(Integer.parseInt(line));
 		}else{
-			Toast.makeText(this, "No response from server", 3);
+			Toast.makeText(this, "No response from server", Toast.LENGTH_LONG);
 		}
 	}
 	
 	private void receiveResponse(int flag){
 
-		Builder dialog = new AlertDialog.Builder(this);
+//		Builder dialog = new AlertDialog.Builder(this);
 		switch(flag){
 		case 0:
-			dialog.setMessage(R.string.login_fail);
-			dialog.show();
+//			dialog.setMessage(R.string.login_fail);
+//			dialog.show();
+			Toast.makeText(this, R.string.login_fail, Toast.LENGTH_LONG);
 			break;
 		case 1:
-			dialog.setMessage(R.string.login_succeed);
-			dialog.show();
+//			dialog.setMessage(R.string.login_succeed);
+//			dialog.show();
+			Toast.makeText(this, R.string.login_succeed, Toast.LENGTH_LONG);
 			startActivity(new Intent(this, ULESActivity.class));
 			break;
 		case 2:
-			dialog.setMessage(R.string.operation_error);
-			dialog.show();
+//			dialog.setMessage(R.string.operation_error);
+//			dialog.show();
+			Toast.makeText(this, R.string.operation_error, Toast.LENGTH_LONG);
 			break;
 		case 3:
-			dialog.setMessage(R.string.user_account_locked);
-			dialog.show();
+//			dialog.setMessage(R.string.user_account_locked);
+//			dialog.show();
+			Toast.makeText(this, R.string.user_account_locked, Toast.LENGTH_LONG);
 			break;
 		default:
 			break;	

@@ -13,7 +13,7 @@ import android.util.Log;
 public class SMSReceiver extends BroadcastReceiver {
 	public final static String TAG = "SMSReceiver";
 	
-	private ULESActivity context;
+	private ULESActivity mContext;
 	
 	private Handler handler;
 	
@@ -25,7 +25,7 @@ public class SMSReceiver extends BroadcastReceiver {
 	public SMSReceiver(ULESActivity context){
 		super();
 		Log.v(TAG,"SMSReceiver create");
-		this.context = context;
+		this.mContext = context;
 	}
 	
 	public Handler getHandler(){
@@ -57,7 +57,7 @@ public class SMSReceiver extends BroadcastReceiver {
 						// do nothing, as the laptop application has internet connection and could access the web server itselft
 					}else{
 						// the content is the random key
-						Message.obtain(this.context.getHandler(), R.id.sms_received, data.getContent()).sendToTarget();						
+						Message.obtain(this.mContext.getHandler(), R.id.sms_received, data.getContent()).sendToTarget();						
 					}
 					
 				}
