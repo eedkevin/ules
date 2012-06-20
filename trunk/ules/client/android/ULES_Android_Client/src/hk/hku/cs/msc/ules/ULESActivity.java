@@ -74,9 +74,18 @@ public class ULESActivity extends Activity {
         ((ULESApplication)getApplication()).setServerAddress(getResources().getString(R.string.server_default_address));
         
         
-    }
+    }       
     
     @Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		
+	}
+
+
+
+	@Override
     public boolean onCreateOptionsMenu(Menu menu){
     	boolean result = super.onCreateOptionsMenu(menu);
     	SubMenu settingsMenu = menu.addSubMenu(0, Menu.FIRST, Menu.NONE, "Settings"); 
@@ -120,6 +129,10 @@ public class ULESActivity extends Activity {
     	IntentFilter filter = new IntentFilter(ACTION);
     	filter.setPriority(1000);
     	registerReceiver(receiver, filter);
+    }
+    
+    private void unregisterSMSReceiver(){
+    	
     }
     
     private void requestRandomKey(){
