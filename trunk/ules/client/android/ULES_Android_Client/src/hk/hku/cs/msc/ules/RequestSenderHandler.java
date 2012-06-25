@@ -11,8 +11,8 @@ public class RequestSenderHandler extends Handler{
 	
 	private final RequestSender sender;
 	
-	RequestSenderHandler(RequestSender sender){
-		this.sender = sender;
+	RequestSenderHandler(RequestSender thread){
+		this.sender = thread;
 	}
 	
 	@Override

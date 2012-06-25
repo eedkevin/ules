@@ -54,7 +54,7 @@ public class LoginActivity extends Activity{
 		mContext = getApplication();
 		
 		 // Set default value for server address
-        ((ULESApplication)getApplication()).setServerAddress(getResources().getString(R.string.server_default_address));
+        ((ULESApplication)getApplication()).setServerAddress(getResources().getString(R.string.web_server_default_address));
 		
 		etUsername = (EditText) findViewById(R.id.editText_username);
 		etPassword = (EditText) findViewById(R.id.editText_passowrd);

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <string name="server_default_address">http://147.8.82.145:8080/</string>
+    <string name="web_server_default_address">http://147.8.82.145:8080/</string>
     <!-- <string name="server_default_address">http://192.168.1.16:8080/ufle/</string> -->
     
+    <string name="socket_server_address">127.0.0.1</string>
+    <string name="socket_connection_port">12345</string>
 </resources>
