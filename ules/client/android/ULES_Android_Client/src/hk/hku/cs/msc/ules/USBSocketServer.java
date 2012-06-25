@@ -4,11 +4,12 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 
 public class USBSocketServer extends Thread{
+	private static final String TAG = "USBSocketServer";
 	
 	private String serverIP;
 	private String port;
@@ -41,13 +42,15 @@ public class USBSocketServer extends Thread{
 				serverSocket = new ServerSocket(Integer.parseInt(port));
 				while(true){
 					Socket client = serverSocket.accept();
+					String ipAddr = client.getInetAddress().getHostAddress();
+					Log.v(TAG, "=======>" + ipAddr + "<======");
 				}
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}  
 
 	
 }
