@@ -71,7 +71,7 @@ public class ULESActivity extends Activity {
 		});
         
         // Set default value for server address
-        ((ULESApplication)getApplication()).setServerAddress(getResources().getString(R.string.server_default_address));
+        ((ULESApplication)getApplication()).setServerAddress(getResources().getString(R.string.web_server_default_address));
         
         
     }       
