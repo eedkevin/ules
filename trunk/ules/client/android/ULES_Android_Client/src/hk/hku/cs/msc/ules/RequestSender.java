@@ -18,7 +18,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.apache.http.client.ClientProtocolException;
 
 import android.content.Context;
@@ -69,7 +68,7 @@ public class RequestSender extends Thread{
 		try{
 			HttpResponse httpResponse = httpClient.execute(httpPost);
 			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
-				line = readResponseFromRandomKey(httpResponse);
+				line = readRandomKeyStatus(httpResponse);
 			}
 		} catch(UnsupportedEncodingException e){
 			e.printStackTrace();
@@ -98,7 +97,7 @@ public class RequestSender extends Thread{
 			httpPost.setEntity(new UrlEncodedFormEntity(params));
 			HttpResponse httpResponse = httpClient.execute(httpPost);
 			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
-				line = readResponseFromRandomKey(httpResponse);
+				line = readRandomKeyStatus(httpResponse);
 			}
 		} catch(UnsupportedEncodingException e){
 			e.printStackTrace();
@@ -123,12 +122,12 @@ public class RequestSender extends Thread{
 		params.add(new BasicNameValuePair("username", username));
 		params.add(new BasicNameValuePair("sms", randomKey));
 
-		String line = null;
+		String mountKey = null;
 		try{
 			httpPost.setEntity(new UrlEncodedFormEntity(params));
 			HttpResponse httpResponse = httpClient.execute(httpPost);
 			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
-				line = readResponseFromMountKey(httpResponse);
+				mountKey = readMountKey(httpResponse);
 			}
 		} catch(UnsupportedEncodingException e){
 			e.printStackTrace();
@@ -139,17 +138,18 @@ public class RequestSender extends Thread{
 			Log.e(TAG,"Could not establish a HTTP connection to the server or could not get a response properly from the server.",e);
 			e.printStackTrace();
 		}		
-		String mountkey = line;
-		return mountkey;
+		Log.v(TAG,"mountkey = " + mountKey);
+		showToast(mountKey);
+		return mountKey;
 	}
 	
-	private String readResponseFromRandomKey(HttpResponse httpResponse){
-		String line = null;
+	private String readRandomKeyStatus(HttpResponse httpResponse){
+		String status = null;
 		
 		try { 
 			InputStream content = httpResponse.getEntity().getContent();
 			BufferedReader in = new BufferedReader(new InputStreamReader(content));
-			line = in.readLine();
+			status = in.readLine();
 
 			in.close();
 
@@ -160,11 +160,11 @@ public class RequestSender extends Thread{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return line;
+		return status;
 	}
 	
-	private String readResponseFromMountKey(HttpResponse httpResponse) {
-		String line = null;
+	private String readMountKey(HttpResponse httpResponse) {
+		String mountKey = null;
 
 		try {
 //			line = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
@@ -177,7 +177,7 @@ public class RequestSender extends Thread{
 //			}
 			char[] arrChar = new char[365];
 			in.read(arrChar);
-			line = new String(arrChar);
+			mountKey = new String(arrChar);
 //			line = arrChar.toString();
 			
 			in.close();
@@ -190,7 +190,7 @@ public class RequestSender extends Thread{
 			e.printStackTrace();
 		}
 
-		return line;
+		return mountKey;
 
 	}	
 	

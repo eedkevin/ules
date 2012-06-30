@@ -35,7 +35,7 @@ public class SMSReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		// TODO Auto-generated method stub
-		Log.v(TAG,"onReceive");
+		//Log.v(TAG,"onReceive");
 		
 		Bundle bundle = intent.getExtras();
 		Object[] messages = (Object[]) bundle.get("pdus");

@@ -37,7 +37,6 @@ public class LoginActivity extends Activity{
 	public static final String TAG = "LoginActivity";
 	
 	private Context mContext;
-	private USBSocketServer usbSocketServer;
 	
 	private EditText etUsername;
 	private EditText etPassword;
@@ -53,8 +52,6 @@ public class LoginActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);
 		mContext = getApplication();
-		usbSocketServer = new USBSocketServer(this);
-		usbSocketServer.start();
 		
 		 // Set default value for server address
         ((ULESApplication)getApplication()).setServerAddress(getResources().getString(R.string.web_server_default_address));
