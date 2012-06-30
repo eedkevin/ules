@@ -16,7 +16,9 @@ public class USBSocketServerHandler extends Handler{
 	public void handleMessage(Message message) {
 		// TODO Auto-generated method stub
 		switch(message.what){
-		
+			case R.id.mount_key_received:
+				owner.write((String)message.obj);
+				break;
 		}
 	}
 	

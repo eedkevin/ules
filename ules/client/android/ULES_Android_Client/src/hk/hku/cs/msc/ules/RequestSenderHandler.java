@@ -29,9 +29,8 @@ public class RequestSenderHandler extends Handler{
 				break;
 			case R.id.request_mount_key:
 				Log.v(TAG, "request_mount_key");
-				String mountkey = sender.requestMountKey((RequestData)message.obj);
-				sender.showToast(mountkey);
-				Log.v(TAG,"mountkey = " + mountkey);
+				String mountKey = sender.requestMountKey((RequestData)message.obj);
+				((ULESActivity)sender.getContext()).getHandler().obtainMessage(R.id.mount_key_received, mountKey).sendToTarget();
 				break;
 		}
 	}

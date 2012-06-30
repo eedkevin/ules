@@ -3,6 +3,7 @@
     <item type="id" name="request_random_key"></item>
     <item type="id" name="request_mount_key"></item>
     <item type="id" name="sms_received"></item>
+    <item type="id" name="mount_key_received"></item>
     
     <item type="id" name="connection_failed"></item>
     <item type="id" name="connection_succeeded"></item>

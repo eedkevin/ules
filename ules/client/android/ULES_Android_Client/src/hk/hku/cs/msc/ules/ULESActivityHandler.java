@@ -1,7 +1,6 @@
 package hk.hku.cs.msc.ules;
 
 import hk.hku.cs.msc.ules.dto.RequestData;
-import hk.hku.cs.msc.ules.dto.SMSData;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -12,12 +11,16 @@ public class ULESActivityHandler extends Handler{
 	private final ULESActivity activity;
 //	private SMSReceiver smsReceiver;
 	private RequestSender requestSender;
+	private USBSocketServer usbSocketServer;
 	
 	ULESActivityHandler(ULESActivity activity){
 		this.activity = activity;
 //		smsReceiver = new SMSReceiver(activity);
 		requestSender = new RequestSender(activity);
 		requestSender.start();
+		
+		usbSocketServer = new USBSocketServer(activity);
+		usbSocketServer.start();
 	}
 	
 	@Override
@@ -42,6 +45,9 @@ public class ULESActivityHandler extends Handler{
 				String url = ((ULESApplication)activity.getApplication()).getServerAddress() + "getmountkey.jsp";
 				RequestData data = new RequestData(activity.username, url, (String)message.obj);
 				requestSender.getHandler().obtainMessage(R.id.request_mount_key, data).sendToTarget();
+				break;
+			case R.id.mount_key_received:
+				usbSocketServer.getHandler().obtainMessage(R.id.mount_key_received, message.obj).sendToTarget();
 				break;
 		}
 	}
