@@ -4,8 +4,7 @@
  */
 package communication;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -20,7 +19,8 @@ public class AndroidClient {
         try
         {
            //redirect the port
-            Runtime.getRuntime().exec("E:\\android-sdk\\platform-tools\\adb forward tcp:12581 tcp:12345");
+            Runtime.getRuntime().exec("adb forward tcp:12581 tcp:12345");
+            //Runtime.getRuntime().exec("adb shell am broadcast -a StartULES");
             System.out.println("adb succeeds");
         }catch (IOException e3)
         {
@@ -39,8 +39,9 @@ public class AndroidClient {
 
 //            String message = "AndroidRes,Where is my Pig (Android)?";
 //            System.out.println("TCP 2222" + "C: Sending: '" + message + "'");
-//            PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())),true);
-//            out.println(message);
+            PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())),true);
+            out.println("this is a test from pc client");
+            out.flush();
             
             BufferedInputStream bis=new BufferedInputStream(socket.getInputStream());
             byte[] a=new byte[400];
