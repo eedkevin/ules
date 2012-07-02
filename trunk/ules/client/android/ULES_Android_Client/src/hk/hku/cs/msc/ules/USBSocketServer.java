@@ -78,31 +78,31 @@ public class USBSocketServer extends Thread{
 	}
 	
 	
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		super.run();		
-		
-//		try{
-//			if(serverIP != null){
-//				serverSocket = new ServerSocket(Integer.parseInt(port));
-//				while(true){
-//					Socket client = serverSocket.accept();
-//					String ipAddr = client.getInetAddress().getHostAddress();
-//					Log.v(TAG, "=======>" + ipAddr + "<======");
-//					BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-//					Log.v(TAG, "message received: " + reader.readLine());
-//					
-//					PrintWriter writer = new PrintWriter(client.getOutputStream(),true);
-//					writer.println("Hi pc client, you are already connected to android server");
-//					
-//				}
-//			}
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-	}  
+//	@Override
+//	public void run() {
+//		// TODO Auto-generated method stub
+//		super.run();		
+//		
+////		try{
+////			if(serverIP != null){
+////				serverSocket = new ServerSocket(Integer.parseInt(port));
+////				while(true){
+////					Socket client = serverSocket.accept();
+////					String ipAddr = client.getInetAddress().getHostAddress();
+////					Log.v(TAG, "=======>" + ipAddr + "<======");
+////					BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+////					Log.v(TAG, "message received: " + reader.readLine());
+////					
+////					PrintWriter writer = new PrintWriter(client.getOutputStream(),true);
+////					writer.println("Hi pc client, you are already connected to android server");
+////					
+////				}
+////			}
+////		} catch (IOException e) {
+////			// TODO Auto-generated catch block
+////			e.printStackTrace();
+////		}
+//	}  
 
 	
 }
