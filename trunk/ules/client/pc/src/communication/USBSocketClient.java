@@ -52,6 +52,7 @@ public class USBSocketClient {
     }
 
     public void connect() {
+        socket = null;
         try {
             serverAddr = InetAddress.getByName("127.0.0.1");
             socket = new Socket(serverAddr, 12581);//此处的12581是PC开放的端口，已重定向到Device的12345端口
@@ -60,18 +61,28 @@ public class USBSocketClient {
             out.println("this is a test from pc client");
             out.flush();
 
-            //while(pmk==null || !pmk.startsWith("pmk=")){
+            while(pmk==null || !pmk.startsWith("pmk=")){
             //while(true){
                 readInput();
-            //}
+            }
             
         } catch (SocketException ex2) {
             System.out.println(ex2);
+            
+            // reconnect the server 2 seconds later
+            try {
+                System.out.println("Thread will sleep 2 seconds");
+                Thread.sleep(2000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(USBSocketClient.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
             reconnect();
-
         } catch (IOException ex) {
             System.out.println(ex);
             Logger.getLogger(SocketTest.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+
         }
     }
     
@@ -92,6 +103,7 @@ public class USBSocketClient {
         }else{
             System.out.println(temp);
         }
+        a = null;
     }
 
 }
