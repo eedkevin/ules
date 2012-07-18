@@ -29,18 +29,37 @@ public class USBSocketServer extends Thread{
 		Log.v(TAG, "Started");
 		
 		this.mContext = context;
-		this.serverIP = context.getResources().getString(R.string.web_server_default_address);
+		this.serverIP = context.getResources().getString(R.string.socket_server_address);
 		this.port = context.getResources().getString(R.string.socket_connection_port);
 
 		handler = new USBSocketServerHandler(this);
-		
+		isAccepted = false;
 //		// start a new thread to listen to the socket connection
 //		if(serverIP != null && port != null){
 //			startServer();
 //		}		
 		
 	}
+
+	@Override
+	public void destroy() {
+		// TODO Auto-generated method stub
+		Log.v(TAG, "destroy");
+		super.destroy();
+		handler.sendEmptyMessage(R.id.quit);
+		this.closeSockets();
+	}
 	
+	
+
+	@Override
+	public void interrupt() {
+		// TODO Auto-generated method stub
+		super.interrupt();
+		handler.sendEmptyMessage(R.id.quit);
+		this.closeSockets();
+	}
+
 	public Handler getHandler(){
 		return this.handler;
 	}
@@ -61,57 +80,7 @@ public class USBSocketServer extends Thread{
 		}
 		writer.println(text);
 		writer.flush();
-		
 	}
-	
-	private void startServer(){
-		try{
-			isAccepted = false;
-			serverSocket = new ServerSocket(Integer.parseInt(port));
-			while(true){
-				client = serverSocket.accept();
-				isAccepted = true;
-				String ipAddr = client.getInetAddress().getHostAddress();
-				Log.v(TAG, "Client ip address: " + ipAddr);
-				BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-				Log.v(TAG, "Client said: " + reader.readLine());
-				
-				writer = new PrintWriter(client.getOutputStream(),true);
-				writer.println("Hi pc client, you are already connected to android server");		
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			isAccepted = false;
-		}		
-	}
-
-	
-//	private void startServer(){
-//		new Thread(){
-//			public void run(){
-////				serverIP = mContext.getResources().getString(R.string.web_server_default_address);
-////				port = mContext.getResources().getString(R.string.socket_connection_port);
-//				try{
-//					serverSocket = new ServerSocket(Integer.parseInt(port));
-//					while(true){
-//						client = serverSocket.accept();
-//						String ipAddr = client.getInetAddress().getHostAddress();
-//						Log.v(TAG, "Client ip address: " + ipAddr);
-//						BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-//						Log.v(TAG, "Client said: " + reader.readLine());
-//						
-//						writer = new PrintWriter(client.getOutputStream(),true);
-//						writer.println("Hi pc client, you are already connected to android server");		
-//					}
-//				} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//				}
-//			}
-//		}.start();		
-//	}
-	
 	
 	@Override
 	public void run() {
@@ -121,31 +90,46 @@ public class USBSocketServer extends Thread{
 		if(serverIP != null && port != null){
 			startServer();
 		}else{
-			this.serverIP = mContext.getResources().getString(R.string.web_server_default_address);
+			this.serverIP = mContext.getResources().getString(R.string.socket_server_address);
 			this.port = mContext.getResources().getString(R.string.socket_connection_port);
 			startServer();
 		}
-		
-//		try{
-//			if(serverIP != null){
-//				serverSocket = new ServerSocket(Integer.parseInt(port));
-//				while(true){
-//					Socket client = serverSocket.accept();
-//					String ipAddr = client.getInetAddress().getHostAddress();
-//					Log.v(TAG, "=======>" + ipAddr + "<======");
-//					BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-//					Log.v(TAG, "message received: " + reader.readLine());
-//					
-//					PrintWriter writer = new PrintWriter(client.getOutputStream(),true);
-//					writer.println("Hi pc client, you are already connected to android server");
-//					
-//				}
-//			}
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 	}  
+	
+	private void startServer(){
+		Log.v(TAG,"startServer.");
+		try{
+			serverSocket = new ServerSocket(Integer.parseInt(port));
+			while(!isAccepted){
+				client = serverSocket.accept();
+				isAccepted = true;
+				String ipAddr = client.getInetAddress().getHostAddress();
+				Log.v(TAG, "Client ip address: " + ipAddr);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+				Log.v(TAG, "Client said: " + reader.readLine());
+				
+				writer = new PrintWriter(client.getOutputStream(),true);
+				writer.println("Hi pc client, you are already connected to android server");
+				writer.flush();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			isAccepted = false;
+		}	
+	}
+	
+	private void closeSockets(){
+		Log.v(TAG, "close sockets");
+		try {
+			client.close();
+			serverSocket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
 	
 }

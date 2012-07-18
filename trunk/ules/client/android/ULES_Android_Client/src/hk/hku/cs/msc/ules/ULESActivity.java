@@ -36,6 +36,7 @@ public class ULESActivity extends Activity {
 	private static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
 	
 	private Context mContext;
+	SMSReceiver smsReceiver;
 	
 	private Handler handler;
 	
@@ -47,8 +48,8 @@ public class ULESActivity extends Activity {
 	private EditText et_password;
 	
 	// temp data
-	protected String username = "kevin";
-	private String password = "123456";
+	protected String username;
+	private String password;
 	private String from = "mobile";
 	
     /** Called when the activity is first created. */
@@ -57,6 +58,10 @@ public class ULESActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         mContext = getApplication();
+        
+        username = getIntent().getExtras().getString("username");
+        password = getIntent().getExtras().getString("password");
+        
         handler = new ULESActivityHandler(this);
         registerSMSReceiver();
         
@@ -80,7 +85,8 @@ public class ULESActivity extends Activity {
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		
+		this.getHandler().sendEmptyMessage(R.id.quit);
+		this.unregisterSMSReceiver();
 	}
 
 
@@ -125,14 +131,14 @@ public class ULESActivity extends Activity {
     }
     
     private void registerSMSReceiver(){
-    	SMSReceiver receiver = new SMSReceiver(this);
+    	smsReceiver = new SMSReceiver(this);
     	IntentFilter filter = new IntentFilter(ACTION);
     	filter.setPriority(1000);
-    	registerReceiver(receiver, filter);
+    	registerReceiver(smsReceiver, filter);
     }
     
     private void unregisterSMSReceiver(){
-    	
+    	unregisterReceiver(smsReceiver);
     }
     
     private void requestRandomKey(){

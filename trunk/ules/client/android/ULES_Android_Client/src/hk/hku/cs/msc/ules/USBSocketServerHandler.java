@@ -2,6 +2,7 @@ package hk.hku.cs.msc.ules;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 public class USBSocketServerHandler extends Handler{
 	private final static String TAG = "USBSocketServerHandler";
@@ -19,8 +20,14 @@ public class USBSocketServerHandler extends Handler{
 			case R.id.mount_key_received:
 				owner.write((String)message.obj);
 				break;
+			case R.id.quit:
+				Log.v(TAG, "quit");
+				//this.close();
+				break;
 		}
 	}
 	
-	
+	private void close(){
+		this.getLooper().quit();
+	}
 }

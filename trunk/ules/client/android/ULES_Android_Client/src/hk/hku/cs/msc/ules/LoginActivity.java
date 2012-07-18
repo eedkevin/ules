@@ -121,7 +121,10 @@ public class LoginActivity extends Activity{
 //			dialog.setMessage(R.string.login_succeed);
 //			dialog.show();
 			Toast.makeText(this, R.string.login_succeed, Toast.LENGTH_LONG);
-			startActivity(new Intent(this, ULESActivity.class));
+			Intent intent = new Intent(this, ULESActivity.class);
+			intent.putExtra("username", username);
+			intent.putExtra("password", password);
+			startActivity(intent);
 			break;
 		case 2:
 //			dialog.setMessage(R.string.operation_error);

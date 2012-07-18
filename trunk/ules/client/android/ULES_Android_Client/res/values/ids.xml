@@ -9,4 +9,5 @@
     <item type="id" name="connection_succeeded"></item>
     <item type="id" name="failed_reading_json"></item>
 
+    <item type="id" name="quit"></item>
 </resources>
