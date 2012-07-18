@@ -49,6 +49,21 @@ public class ULESActivityHandler extends Handler{
 			case R.id.mount_key_received:
 				usbSocketServer.getHandler().obtainMessage(R.id.mount_key_received, message.obj).sendToTarget();
 				break;
+			case R.id.quit:
+				Log.v(TAG, "quit");
+				this.close();
+				break;
 		}
+	}
+	
+	
+	private void close(){
+		requestSender.interrupt();
+		requestSender.stop();
+		//requestSender.destroy();
+		usbSocketServer.interrupt();
+		usbSocketServer.stop();
+		//usbSocketServer.destroy();
+		//this.getLooper().quit();
 	}
 }

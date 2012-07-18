@@ -9,10 +9,10 @@ import android.widget.Toast;
 public class RequestSenderHandler extends Handler{
 	private final static String TAG = "RequestSenderHandler";
 	
-	private final RequestSender sender;
+	private final RequestSender owner;
 	
 	RequestSenderHandler(RequestSender thread){
-		this.sender = thread;
+		this.owner = thread;
 	}
 	
 	@Override
@@ -20,18 +20,26 @@ public class RequestSenderHandler extends Handler{
 		switch(message.what){
 			case R.id.request_random_key:
 				Log.v(TAG, "request_random_key");
-				String line = sender.requestRandomKey((RequestData)message.obj);
+				String line = owner.requestRandomKey((RequestData)message.obj);
 				if(line == null){
-					((ULESActivity)sender.getContext()).getHandler().obtainMessage(R.id.connection_failed).sendToTarget();
+					((ULESActivity)owner.getContext()).getHandler().obtainMessage(R.id.connection_failed).sendToTarget();
 				}else{
-					((ULESActivity)sender.getContext()).getHandler().obtainMessage(R.id.connection_succeeded).sendToTarget();
+					((ULESActivity)owner.getContext()).getHandler().obtainMessage(R.id.connection_succeeded).sendToTarget();
 				}
 				break;
 			case R.id.request_mount_key:
 				Log.v(TAG, "request_mount_key");
-				String mountKey = sender.requestMountKey((RequestData)message.obj);
-				((ULESActivity)sender.getContext()).getHandler().obtainMessage(R.id.mount_key_received, mountKey).sendToTarget();
+				String mountKey = owner.requestMountKey((RequestData)message.obj);
+				((ULESActivity)owner.getContext()).getHandler().obtainMessage(R.id.mount_key_received, mountKey).sendToTarget();
+				break;
+			case R.id.quit:
+				Log.v(TAG, "quit");
+				//this.close();
 				break;
 		}
+	}
+	
+	private void close(){
+		this.getLooper().quit();
 	}
 }

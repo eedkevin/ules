@@ -44,6 +44,22 @@ public class RequestSender extends Thread{
 		return this.mContext;
 	}
 	
+	
+	
+	@Override
+	public void interrupt() {
+		// TODO Auto-generated method stub
+		super.interrupt();
+		handler.sendEmptyMessage(R.id.quit);
+	}
+
+	@Override
+	public void destroy() {
+		// TODO Auto-generated method stub
+		super.destroy();
+		handler.sendEmptyMessage(R.id.quit);
+	}
+
 	protected String requestRandomKey(RequestData data){
 		return requestRandomKey(data.getUrl(), data.getUsername(), data.getFrom());
 		//return requestRandomKey();
