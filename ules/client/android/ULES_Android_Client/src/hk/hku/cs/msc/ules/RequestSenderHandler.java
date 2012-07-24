@@ -32,14 +32,9 @@ public class RequestSenderHandler extends Handler{
 				String mountKey = owner.requestMountKey((RequestData)message.obj);
 				((ULESActivity)owner.getContext()).getHandler().obtainMessage(R.id.mount_key_received, mountKey).sendToTarget();
 				break;
-			case R.id.quit:
-				Log.v(TAG, "quit");
-				//this.close();
+			default:
 				break;
 		}
 	}
-	
-	private void close(){
-		this.getLooper().quit();
-	}
+
 }

@@ -20,14 +20,9 @@ public class USBSocketServerHandler extends Handler{
 			case R.id.mount_key_received:
 				owner.write((String)message.obj);
 				break;
-			case R.id.quit:
-				Log.v(TAG, "quit");
-				//this.close();
+			default:
 				break;
 		}
 	}
-	
-	private void close(){
-		this.getLooper().quit();
-	}
+
 }

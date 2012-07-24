@@ -10,4 +10,5 @@
     <item type="id" name="failed_reading_json"></item>
 
     <item type="id" name="quit"></item>
+    <item type="id" name="close_sub_threads"></item>
 </resources>

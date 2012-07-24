@@ -46,7 +46,6 @@ public class USBSocketServer extends Thread{
 		// TODO Auto-generated method stub
 		Log.v(TAG, "destroy");
 		super.destroy();
-		handler.sendEmptyMessage(R.id.quit);
 		this.closeSockets();
 	}
 	
@@ -55,8 +54,8 @@ public class USBSocketServer extends Thread{
 	@Override
 	public void interrupt() {
 		// TODO Auto-generated method stub
+		Log.v(TAG, "interrupt");
 		super.interrupt();
-		handler.sendEmptyMessage(R.id.quit);
 		this.closeSockets();
 	}
 
@@ -69,17 +68,26 @@ public class USBSocketServer extends Thread{
 	}
 	
 	protected void write(String text){
+		int n = 0;
 		
-		while(!isAccepted){
+		// try up to 5 times, that's 10 seconds
+		while(!isAccepted && n <5){
 			try {
 				Thread.sleep(2000);
+				n++;
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		writer.println(text);
-		writer.flush();
+		
+		if(serverSocket !=null && client !=null){
+			writer.println(text);
+			writer.flush();
+		}else{
+			Log.v(TAG, "there is no client to write data to");
+		}
+		((ULESActivity)mContext).getHandler().obtainMessage(R.id.quit).sendToTarget();
 	}
 	
 	@Override
@@ -97,7 +105,7 @@ public class USBSocketServer extends Thread{
 	}  
 	
 	private void startServer(){
-		Log.v(TAG,"startServer.");
+		Log.v(TAG,"startServer");
 		try{
 			serverSocket = new ServerSocket(Integer.parseInt(port));
 			while(!isAccepted){
@@ -119,11 +127,19 @@ public class USBSocketServer extends Thread{
 		}	
 	}
 	
+//	private void isClientConnecting(){
+//		try{
+//			serverSocket.
+//		}catch(Exception ex){
+//		      reconnect();
+//		}
+//	}
+	
 	private void closeSockets(){
 		Log.v(TAG, "close sockets");
 		try {
-			client.close();
-			serverSocket.close();
+			if(client!=null) client.close();
+			if(serverSocket!=null) serverSocket.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -85,7 +85,7 @@ public class ULESActivity extends Activity {
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		this.getHandler().sendEmptyMessage(R.id.quit);
+		handler.sendEmptyMessage(R.id.close_sub_threads);
 		this.unregisterSMSReceiver();
 	}
 
@@ -122,7 +122,7 @@ public class ULESActivity extends Activity {
     }
     
     public void alertConnectionStatus(int status){
-    	Toast.makeText(this, status, 3).show();
+    	Toast.makeText(this, status, Toast.LENGTH_LONG).show();
     }
     
     public void requestMountKey(String randomKey){
