@@ -44,21 +44,6 @@ public class RequestSender extends Thread{
 		return this.mContext;
 	}
 	
-	
-	
-	@Override
-	public void interrupt() {
-		// TODO Auto-generated method stub
-		super.interrupt();
-		handler.sendEmptyMessage(R.id.quit);
-	}
-
-	@Override
-	public void destroy() {
-		// TODO Auto-generated method stub
-		super.destroy();
-		handler.sendEmptyMessage(R.id.quit);
-	}
 
 	protected String requestRandomKey(RequestData data){
 		return requestRandomKey(data.getUrl(), data.getUsername(), data.getFrom());
@@ -71,34 +56,7 @@ public class RequestSender extends Thread{
 	
 	protected void showToast(String str){
 		Toast.makeText(mContext, str, Toast.LENGTH_LONG).show();
-	}
-	
-	private String requestRandomKey(){
-		
-		String url = "http://192.168.1.16:8080/ufle/getmountkey.jsp?username=kevin&sms=374513";
-		
-		HttpClient httpClient = new DefaultHttpClient();
-		HttpPost httpPost = new HttpPost(url);
-
-		String line = null;
-		try{
-			HttpResponse httpResponse = httpClient.execute(httpPost);
-			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
-				line = readRandomKeyStatus(httpResponse);
-			}
-		} catch(UnsupportedEncodingException e){
-			e.printStackTrace();
-		} catch(ClientProtocolException e){
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			Log.e(TAG,"Could not establish a HTTP connection to the server or could not get a response properly from the server.",e);
-			e.printStackTrace();
-		}
-		
-		return line;	
-	}
-	
+	}	
 	
 	private String requestRandomKey(String url, String username, String from){
 		

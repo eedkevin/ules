@@ -6,6 +6,7 @@
     
     <string name="direction">Press the button below to request a random key from server. A SMS will be received a few seconds after a successful connection. The SMS will be read automatically by the app and finish the next few steps itself. Just Keep your mobile network working and wait a second.</string>
     <string name="request_random_key">Request for Random Key</string>
+    <string name="transferring_pmk">Transferring Data To PC Client, Please wait...</string>
     
     <string name="connection_succeeded">Connection Succeeded</string>
     <string name="connection_failed">Connection Failed</string>

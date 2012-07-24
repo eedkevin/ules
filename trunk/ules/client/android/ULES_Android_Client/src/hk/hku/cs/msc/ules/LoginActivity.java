@@ -22,6 +22,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.Intent;
@@ -41,6 +42,7 @@ public class LoginActivity extends Activity{
 	private EditText etUsername;
 	private EditText etPassword;
 	private Button btnLogin;
+	private ProgressDialog progressDialog;
 	
 	private String username;
 	private String password;
@@ -71,10 +73,12 @@ public class LoginActivity extends Activity{
 				
 			}
 		});
-	}
-
+	}	
+	
 	private void doLogin(){
 		//String url = "http://192.168.1.16:8080/ufle/getmountkey.jsp?username=kevin&sms=374513";
+		
+		showProgressDialog();
 		
 		String url = ((ULESApplication)getApplication()).getServerAddress() + "logincheck.jsp";
 		HttpClient httpClient = new DefaultHttpClient();
@@ -107,7 +111,16 @@ public class LoginActivity extends Activity{
 			Toast.makeText(this, "No response from server", Toast.LENGTH_LONG);
 		}
 	}
-	
+
+    private void showProgressDialog(){
+    	progressDialog = ProgressDialog.show(this, "Connecting to Server", "Please wait a second");
+    }
+    
+    private void dismissProgressDialog(){
+    	progressDialog.dismiss();
+    	progressDialog = null;
+    }
+    
 	private void receiveResponse(int flag){
 
 //		Builder dialog = new AlertDialog.Builder(this);
@@ -116,11 +129,13 @@ public class LoginActivity extends Activity{
 //			dialog.setMessage(R.string.login_fail);
 //			dialog.show();
 			Toast.makeText(this, R.string.login_fail, Toast.LENGTH_LONG);
+			dismissProgressDialog();
 			break;
 		case 1:
 //			dialog.setMessage(R.string.login_succeed);
 //			dialog.show();
 			Toast.makeText(this, R.string.login_succeed, Toast.LENGTH_LONG);
+			dismissProgressDialog();
 			Intent intent = new Intent(this, ULESActivity.class);
 			intent.putExtra("username", username);
 			intent.putExtra("password", password);
@@ -130,13 +145,16 @@ public class LoginActivity extends Activity{
 //			dialog.setMessage(R.string.operation_error);
 //			dialog.show();
 			Toast.makeText(this, R.string.operation_error, Toast.LENGTH_LONG);
+			dismissProgressDialog();
 			break;
 		case 3:
 //			dialog.setMessage(R.string.user_account_locked);
 //			dialog.show();
 			Toast.makeText(this, R.string.user_account_locked, Toast.LENGTH_LONG);
+			dismissProgressDialog();
 			break;
 		default:
+			dismissProgressDialog();
 			break;	
 		}
 	}
