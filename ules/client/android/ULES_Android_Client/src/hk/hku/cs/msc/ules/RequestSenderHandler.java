@@ -19,7 +19,7 @@ public class RequestSenderHandler extends Handler{
 	public void handleMessage(Message message){
 		switch(message.what){
 			case R.id.request_random_key:
-				Log.v(TAG, "request_random_key");
+				Log.v(TAG, "internal msg: request random key");
 				String line = owner.requestRandomKey((RequestData)message.obj);
 				if(line == null){
 					((ULESActivity)owner.getContext()).getHandler().obtainMessage(R.id.connection_failed).sendToTarget();
@@ -28,7 +28,7 @@ public class RequestSenderHandler extends Handler{
 				}
 				break;
 			case R.id.request_mount_key:
-				Log.v(TAG, "request_mount_key");
+				Log.v(TAG, "internal msg: request mount key");
 				String mountKey = owner.requestMountKey((RequestData)message.obj);
 				((ULESActivity)owner.getContext()).getHandler().obtainMessage(R.id.mount_key_received, mountKey).sendToTarget();
 				break;

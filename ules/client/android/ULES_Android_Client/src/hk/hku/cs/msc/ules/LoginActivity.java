@@ -27,6 +27,7 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -38,6 +39,7 @@ public class LoginActivity extends Activity{
 	public static final String TAG = "LoginActivity";
 	
 	private Context mContext;
+	private Handler handler;
 	
 	private EditText etUsername;
 	private EditText etPassword;
@@ -55,6 +57,8 @@ public class LoginActivity extends Activity{
 		setContentView(R.layout.login);
 		mContext = getApplication();
 		
+		handler = new LoginActivityHandler(this);
+		
 		 // Set default value for server address
         ((ULESApplication)getApplication()).setServerAddress(getResources().getString(R.string.web_server_default_address));
 		
@@ -69,47 +73,122 @@ public class LoginActivity extends Activity{
 				// TODO Auto-generated method stub
 				username = etUsername.getText().toString().trim();
 				password = etPassword.getText().toString().trim();
-				doLogin();
+				
+				if(username.equals("") || password.equals("")){
+					alert("Please input a username and password");
+				}else{
+					doLogin();
+				}
 				
 			}
 		});
 	}	
 	
+    @Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+    	Log.v(TAG, "onStart");
+		super.onStart();
+		if(((ULESApplication)mContext).isExit()){
+			finish();
+		}
+	}
+    
+    @Override
+	protected void onRestart() {
+		// TODO Auto-generated method stub
+    	Log.v(TAG, "onRestart");
+		super.onStart();
+		if(((ULESApplication)mContext).isExit()){
+			finish();
+		}
+	}
+    
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		Log.v(TAG, "onDestroy");
+		super.onDestroy();
+		handler.removeCallbacks(null);
+	}
+    
+    
+	public Handler getHandler(){
+		return this.handler;
+	}
+	
+	public String getUsername(){
+		return this.username;
+	}
+	
+	public String getPassword(){
+		return this.password;
+	}
+	
+    public void alert(int status){
+    	Toast.makeText(this, status, Toast.LENGTH_LONG).show();
+    }
+    
+    public void alert(String text){
+    	Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+    } 
+    
+    public void alertShort(int status){
+    	Toast.makeText(this, status, Toast.LENGTH_SHORT).show();
+    }
+    
+    public void alertShort(String text){
+    	Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }     
+    
+	
+	
 	private void doLogin(){
 		//String url = "http://192.168.1.16:8080/ufle/getmountkey.jsp?username=kevin&sms=374513";
-		
+		Log.v(TAG, "Login username: "+username+" password: "+password);
 		showProgressDialog();
 		
-		String url = ((ULESApplication)getApplication()).getServerAddress() + "logincheck.jsp";
-		HttpClient httpClient = new DefaultHttpClient();
-		HttpPost httpPost = new HttpPost(url);
+		// start a new thread to connect to the web server
+		new Thread(){
+			public void run(){
+				
+				String url = ((ULESApplication)getApplication()).getServerAddress() + "logincheck.jsp";
+				HttpClient httpClient = new DefaultHttpClient();
+				HttpPost httpPost = new HttpPost(url);
 
-		List<NameValuePair> param = new ArrayList<NameValuePair>();
-		param.add(new BasicNameValuePair("username", username));
-		param.add(new BasicNameValuePair("password", password));
-		
-		String line = null;
-		try{
-			httpPost.setEntity(new UrlEncodedFormEntity(param));
-			HttpResponse httpResponse = httpClient.execute(httpPost);
-			if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
-				line = readResponse(httpResponse);
+				List<NameValuePair> param = new ArrayList<NameValuePair>();
+				param.add(new BasicNameValuePair("username", username));
+				param.add(new BasicNameValuePair("password", password));
+				
+				String line = null;
+				try{
+					httpPost.setEntity(new UrlEncodedFormEntity(param));
+					HttpResponse httpResponse = httpClient.execute(httpPost);
+					if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+						line = readResponse(httpResponse);
+					}
+				} catch(UnsupportedEncodingException e){
+					e.printStackTrace();
+				} catch(ClientProtocolException e){
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					Log.e(TAG,"Could not establish a HTTP connection to the server or could not get a response properly from the server.",e);
+					e.printStackTrace();
+				}
+				
+				// send the received server response to LoginActivityHandler for further processing 
+				handler.obtainMessage(R.id.server_response, line).sendToTarget();
 			}
-		} catch(UnsupportedEncodingException e){
-			e.printStackTrace();
-		} catch(ClientProtocolException e){
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			Log.e(TAG,"Could not establish a HTTP connection to the server or could not get a response properly from the server.",e);
-			e.printStackTrace();
-		}
-		
-		if(line!=null){
-			receiveResponse(Integer.parseInt(line));
-		}else{
-			Toast.makeText(this, "No response from server", Toast.LENGTH_LONG);
-		}
+		}.start();
+
+	}
+	
+	private void startULESActivity(){
+		Intent intent = new Intent(this, ULESActivity.class);
+		intent.putExtra("username", username);
+		intent.putExtra("password", password);
+		startActivity(intent);
 	}
 
     private void showProgressDialog(){
@@ -118,39 +197,40 @@ public class LoginActivity extends Activity{
     
     private void dismissProgressDialog(){
     	progressDialog.dismiss();
-    	progressDialog = null;
+    	//progressDialog = null;
     }
     
-	private void receiveResponse(int flag){
+	protected void receiveResponse(int flag){
 
 //		Builder dialog = new AlertDialog.Builder(this);
 		switch(flag){
 		case 0:
+			Log.v(TAG, "login fail");
+			alertShort(R.string.login_fail);
 //			dialog.setMessage(R.string.login_fail);
 //			dialog.show();
-			Toast.makeText(this, R.string.login_fail, Toast.LENGTH_LONG);
 			dismissProgressDialog();
 			break;
 		case 1:
+			Log.v(TAG, "login succeed");
+			alertShort(R.string.login_succeed);
 //			dialog.setMessage(R.string.login_succeed);
 //			dialog.show();
-			Toast.makeText(this, R.string.login_succeed, Toast.LENGTH_LONG);
 			dismissProgressDialog();
-			Intent intent = new Intent(this, ULESActivity.class);
-			intent.putExtra("username", username);
-			intent.putExtra("password", password);
-			startActivity(intent);
+			startULESActivity();
 			break;
 		case 2:
+			Log.v(TAG, "operation error");
+			alertShort(R.string.operation_error);
 //			dialog.setMessage(R.string.operation_error);
 //			dialog.show();
-			Toast.makeText(this, R.string.operation_error, Toast.LENGTH_LONG);
 			dismissProgressDialog();
 			break;
 		case 3:
+			Log.v(TAG, "user account locked");
+			alertShort(R.string.user_account_locked);
 //			dialog.setMessage(R.string.user_account_locked);
 //			dialog.show();
-			Toast.makeText(this, R.string.user_account_locked, Toast.LENGTH_LONG);
 			dismissProgressDialog();
 			break;
 		default:

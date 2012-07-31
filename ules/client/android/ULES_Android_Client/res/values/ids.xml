@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Internal msg -->
     <item type="id" name="request_random_key"></item>
     <item type="id" name="request_mount_key"></item>
     <item type="id" name="sms_received"></item>
     <item type="id" name="mount_key_received"></item>
     
+    <item type="id" name="quit"></item>
+    <item type="id" name="close_sub_threads"></item>
+    
+    <!-- Connection status -->
     <item type="id" name="connection_failed"></item>
     <item type="id" name="connection_succeeded"></item>
     <item type="id" name="failed_reading_json"></item>
-
-    <item type="id" name="quit"></item>
-    <item type="id" name="close_sub_threads"></item>
+    
+    <!-- Server Responese -->
+    <item type="id" name="server_response"></item>
+    <item type="id" name="login_succeed"></item>
+    <item type="id" name="login_fail"></item>
+    <item type="id" name="operation_error"></item>
+    <item type="id" name="user_account_locked"></item>
+    
 </resources>

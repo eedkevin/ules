@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <PreferenceCategory android:title="Web Server">
+        <EditTextPreference android:key="@string/set_web_server_address"
+            android:title="Set Web Server Address"
+            android:summary="click to input the new web server address">
+        </EditTextPreference>
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="Socket Server">
+        <EditTextPreference android:key="@string/set_socket_server_address"
+            android:title="Set Socket Server Address"
+            android:summary="click to input the new Socket server address">
+        </EditTextPreference>
+        <EditTextPreference android:key="@string/set_socket_server_port_number"
+            android:title="Set Socket Server Port Number"
+            android:summary="click to input the new Socket server port number">
+        </EditTextPreference>
+    </PreferenceCategory>
+    
         <PreferenceCategory android:title="我的位置源">
                 <CheckBoxPreference android:key="wireless_network"
                         android:title="使用无线网络" 
