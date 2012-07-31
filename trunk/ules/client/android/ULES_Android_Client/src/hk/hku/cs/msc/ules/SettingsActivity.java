@@ -16,7 +16,14 @@ public class SettingsActivity extends PreferenceActivity{
 	@Override
 	public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
 			Preference preference) {
-		return false;	
+		
+		if(preference.getKey().equals("")){
+			
+		}else if(preference.getKey().equals("")){
+			
+		}
+		
+		return super.onPreferenceTreeClick(preferenceScreen, preference);	
 	}
 	
 }

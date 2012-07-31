@@ -36,7 +36,7 @@ public class ULESActivity extends Activity {
 	private static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
 	
 	private Context mContext;
-	SMSReceiver smsReceiver;
+	protected SMSReceiver smsReceiver;
 	
 	private Handler handler;
 	
@@ -59,6 +59,12 @@ public class ULESActivity extends Activity {
         setContentView(R.layout.main);
         mContext = getApplication();
         
+        // Set the exit flag. This flag is used to quit activities which belongs to the application
+        ((ULESApplication)getApplication()).setExit(false);
+        
+        // Set default value for server address
+        ((ULESApplication)getApplication()).setServerAddress(getResources().getString(R.string.web_server_default_address));        
+        
         username = getIntent().getExtras().getString("username");
         password = getIntent().getExtras().getString("password");
         
@@ -75,21 +81,37 @@ public class ULESActivity extends Activity {
 			}
 		});
         
+    }          
+
+	@Override
+	protected void onRestart() {
+		// TODO Auto-generated method stub
+		super.onRestart();
+		 // Set the exit flag. This flag is used to quit activities which belongs to the application
+        ((ULESApplication)mContext).setExit(false);
+        
         // Set default value for server address
-        ((ULESApplication)getApplication()).setServerAddress(getResources().getString(R.string.web_server_default_address));
+        ((ULESApplication)mContext).setServerAddress(getResources().getString(R.string.web_server_default_address));
         
-        
-    }       
-    
-    @Override
+        handler = new ULESActivityHandler(this);
+        registerSMSReceiver();
+	}
+
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		Log.v(TAG, "onStop");
+		super.onStop();
+		handler.sendEmptyMessage(R.id.close_sub_threads);
+		unregisterSMSReceiver();
+	}
+
+	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		handler.sendEmptyMessage(R.id.close_sub_threads);
-		this.unregisterSMSReceiver();
+		handler.removeCallbacks(null);
 	}
-
-
 
 	@Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -109,26 +131,40 @@ public class ULESActivity extends Activity {
     		break;
     	case Menu.FIRST + 1:
     		break;
-    	case Menu.FIRST + 10:
-    		break;
     	default:
     		break;
     	}
     	return result;
+    }
+	
+    public Context getContext(){
+    	return mContext;
     }
     
     public Handler getHandler(){
     	return this.handler;
     }
     
-    public void alertConnectionStatus(int status){
+    public void alert(int status){
     	Toast.makeText(this, status, Toast.LENGTH_LONG).show();
     }
     
-    public void requestMountKey(String randomKey){
-    	Log.v(TAG+" requestMountKey", "random key: "+ randomKey);
-    	
+    public void alert(String text){
+    	Toast.makeText(this, text, Toast.LENGTH_LONG).show();
     }
+    
+    public void alertShort(int status){
+    	Toast.makeText(this, status, Toast.LENGTH_SHORT).show();
+    }
+    
+    public void alertShort(String text){
+    	Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }    
+    
+//    public void requestMountKey(String randomKey){
+//    	Log.v(TAG+" requestMountKey", "random key: "+ randomKey);
+//    	
+//    }
     
     private void registerSMSReceiver(){
     	smsReceiver = new SMSReceiver(this);
@@ -143,7 +179,7 @@ public class ULESActivity extends Activity {
     
     private void requestRandomKey(){
 //    	getSavedPassword();
-    	Log.v(TAG+" getSavedPassword", "username: "+username+" password: "+password);
+    	Log.v(TAG, "request random key with username: "+username+" password: "+password);
     	
     	if(username.equals("") || password.equals("")){
     		// Pop up a input dialog requesting for username and password    		
@@ -157,7 +193,6 @@ public class ULESActivity extends Activity {
     }
     
     private void deRequestRandomKey(String url){
-    	Log.v(TAG,"doRequestRandomKey");
     	
     	RequestData data = new RequestData();
     	data.setUsername(username);
@@ -169,7 +204,7 @@ public class ULESActivity extends Activity {
     }
     
     protected void showProgressDialog(){
-    	progressDialog = ProgressDialog.show(this, "Connecting to Server", "Please wait a second");
+    	progressDialog = ProgressDialog.show(this, getResources().getString(R.string.processing_title), getResources().getString(R.string.processing_content));
     }
     
     protected void dismissProgressDialog(){
@@ -207,7 +242,7 @@ public class ULESActivity extends Activity {
     
 //  // Get the saved username and password
 //  private void getSavedPassword(){
-//  	
+//  	Log.v(TAG, "getSavedPassword");
 //  	// Restore prederences
 //  	SharedPreferences sp = getSharedPreferences(SETTING_INFO, 0);
 //  	username = sp.getString(USERNAME, "");
@@ -222,4 +257,5 @@ public class ULESActivity extends Activity {
 //	
 //	final String url = ((ULESApplication)getApplication()).getServerAddress() + "mountkey";    	
 //}
+    
 }

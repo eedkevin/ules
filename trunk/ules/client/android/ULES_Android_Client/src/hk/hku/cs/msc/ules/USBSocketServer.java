@@ -24,9 +24,10 @@ public class USBSocketServer extends Thread{
 	private Handler handler;
 	
 	private boolean isAccepted;
+	private boolean isSocketClosed;
 
 	USBSocketServer(Context context){
-		Log.v(TAG, "Started");
+		Log.v(TAG, "USBSocketServer create");
 		
 		this.mContext = context;
 		this.serverIP = context.getResources().getString(R.string.socket_server_address);
@@ -34,6 +35,7 @@ public class USBSocketServer extends Thread{
 
 		handler = new USBSocketServerHandler(this);
 		isAccepted = false;
+		isSocketClosed = false;
 //		// start a new thread to listen to the socket connection
 //		if(serverIP != null && port != null){
 //			startServer();
@@ -46,17 +48,17 @@ public class USBSocketServer extends Thread{
 		// TODO Auto-generated method stub
 		Log.v(TAG, "destroy");
 		super.destroy();
-		this.closeSockets();
+		handler.removeCallbacks(null);
+		closeSockets();
 	}
-	
-	
 
 	@Override
 	public void interrupt() {
 		// TODO Auto-generated method stub
 		Log.v(TAG, "interrupt");
 		super.interrupt();
-		this.closeSockets();
+		handler.removeCallbacks(null);
+		closeSockets();
 	}
 
 	public Handler getHandler(){
@@ -70,8 +72,9 @@ public class USBSocketServer extends Thread{
 	protected void write(String text){
 		int n = 0;
 		
-		// try up to 5 times, that's 10 seconds
-		while(!isAccepted && n <5){
+		// sleep the thread to wait for the client's connecting if there's no client connected and the socket is not closed by the application
+		// try up to 5 times. As each time takes 2 seconds, that's 10 seconds
+		while(!isAccepted && isSocketClosed && n <5){
 			try {
 				Thread.sleep(2000);
 				n++;
@@ -87,13 +90,16 @@ public class USBSocketServer extends Thread{
 		}else{
 			Log.v(TAG, "there is no client to write data to");
 		}
-		((ULESActivity)mContext).getHandler().obtainMessage(R.id.quit).sendToTarget();
+		((ULESActivity)mContext).getHandler().sendEmptyMessage(R.id.quit);
 	}
 	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 		super.run();	
+		
+		// if the socket is closed by the application, then don't need to start the socket server
+		if(isSocketClosed) return;
 		
 		if(serverIP != null && port != null){
 			startServer();
@@ -105,19 +111,22 @@ public class USBSocketServer extends Thread{
 	}  
 	
 	private void startServer(){
-		Log.v(TAG,"startServer");
+		Log.v(TAG,"start socket server");
 		try{
 			serverSocket = new ServerSocket(Integer.parseInt(port));
 			while(!isAccepted){
+				// if the socket is closed by the application, then don't need to wait for a client
+				if(isSocketClosed) return;
+				
 				client = serverSocket.accept();
 				isAccepted = true;
 				String ipAddr = client.getInetAddress().getHostAddress();
-				Log.v(TAG, "Client ip address: " + ipAddr);
+				Log.v(TAG, "Client is connected, Client ip address: " + ipAddr);
 				BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
 				Log.v(TAG, "Client said: " + reader.readLine());
 				
 				writer = new PrintWriter(client.getOutputStream(),true);
-				writer.println("Hi pc client, you are already connected to android server");
+				writer.println("Hi client, you have connected to android server");
 				writer.flush();
 			}
 		} catch (IOException e) {
@@ -138,6 +147,7 @@ public class USBSocketServer extends Thread{
 	private void closeSockets(){
 		Log.v(TAG, "close sockets");
 		try {
+			isSocketClosed = true;
 			if(client!=null) client.close();
 			if(serverSocket!=null) serverSocket.close();
 		} catch (IOException e) {

@@ -36,6 +36,22 @@ public class RequestSender extends Thread{
 		handler = new RequestSenderHandler(this);
 	}
 	
+	@Override
+	public void destroy() {
+		// TODO Auto-generated method stub
+		Log.v(TAG, "destroy");
+		super.destroy();
+	}
+	
+	@Override
+	public void interrupt() {
+		// TODO Auto-generated method stub
+		Log.v(TAG, "interrupt");
+		super.interrupt();
+		handler.removeCallbacks(null);
+	}	
+	
+
 	public Handler getHandler(){
 		return this.handler;
 	}
@@ -54,8 +70,12 @@ public class RequestSender extends Thread{
 		return requestMountKey(data.getUrl(), data.getUsername(), data.getRandomKey());
 	}
 	
-	protected void showToast(String str){
-		Toast.makeText(mContext, str, Toast.LENGTH_LONG).show();
+	protected void alert(String text){
+		Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();
+	}	
+	
+	protected void alertShort(String text){
+		Toast.makeText(mContext, text, Toast.LENGTH_SHORT).show();
 	}	
 	
 	private String requestRandomKey(String url, String username, String from){
@@ -79,7 +99,7 @@ public class RequestSender extends Thread{
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			Log.e(TAG,"Could not establish a HTTP connection to the server or could not get a response properly from the server.",e);
+			Log.v(TAG,"Could not establish a HTTP connection to the server or could not get a response properly from the server.",e);
 			e.printStackTrace();
 		} finally{
 			
@@ -113,7 +133,7 @@ public class RequestSender extends Thread{
 			e.printStackTrace();
 		}		
 		Log.v(TAG,"mountkey = " + mountKey);
-		showToast(mountKey);
+		//alertShort(mountKey);
 		return mountKey;
 	}
 	
@@ -141,18 +161,12 @@ public class RequestSender extends Thread{
 		String mountKey = null;
 
 		try {
-//			line = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
 			InputStream content = httpResponse.getEntity().getContent();
 			BufferedReader in = new BufferedReader(new InputStreamReader(content));
 			
-//			String[] str = in.readLine().split("=");
-//			if(str.length > 1){
-//				line = str[1];
-//			}
 			char[] arrChar = new char[365];
 			in.read(arrChar);
 			mountKey = new String(arrChar);
-//			line = arrChar.toString();
 			
 			in.close();
 
