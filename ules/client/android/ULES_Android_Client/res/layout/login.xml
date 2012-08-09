@@ -8,7 +8,7 @@
         android:id="@+id/textView_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Username"
+        android:text="@string/username"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <EditText
@@ -24,7 +24,7 @@
         android:id="@+id/textView_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Password"
+        android:text="@string/password"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <EditText
@@ -33,10 +33,18 @@
         android:layout_height="wrap_content"
         android:inputType="textPassword" />
 
-    <Button
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        
+        <Button
         android:id="@+id/button_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login" />
+        android:gravity="center"
+        android:layout_gravity="right"
+        android:text="@string/login" />
+    </FrameLayout>
 
 </LinearLayout>
