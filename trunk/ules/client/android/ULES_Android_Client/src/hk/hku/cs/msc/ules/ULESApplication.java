@@ -22,5 +22,9 @@ public class ULESApplication extends Application{
 	public void setExit(boolean isExit){
 		this.isExit = isExit;
 	}
+	
+	public void reset(){
+		setExit(false);
+	}
 
 }

@@ -102,7 +102,11 @@ public class ULESActivity extends Activity {
 		// TODO Auto-generated method stub
 		Log.v(TAG, "onStop");
 		super.onStop();
+		
+		// it will close the sub threads, i.e. RequestSender thread and USBSocketServer thread
 		handler.sendEmptyMessage(R.id.close_sub_threads);
+		
+		// unregister the SMSReceiver
 		unregisterSMSReceiver();
 	}
 
@@ -116,8 +120,8 @@ public class ULESActivity extends Activity {
 	@Override
     public boolean onCreateOptionsMenu(Menu menu){
     	boolean result = super.onCreateOptionsMenu(menu);
-    	SubMenu settingsMenu = menu.addSubMenu(0, Menu.FIRST, Menu.NONE, "Settings"); 
-    	SubMenu helpMenu = menu.addSubMenu(0, Menu.FIRST + 1, Menu.NONE, "Help"); 
+    	menu.addSubMenu(0, Menu.FIRST, Menu.NONE, "Settings"); 
+    	menu.addSubMenu(0, Menu.FIRST + 1, Menu.NONE, "Help"); 
     	//settingsMenu.add(0, Menu.FIRST + 10, Menu.NONE, "Set Server Address");
     	return result;
     }
@@ -130,6 +134,7 @@ public class ULESActivity extends Activity {
     		startActivity(new Intent(this, SettingsActivity.class));
     		break;
     	case Menu.FIRST + 1:
+    		showHelp();
     		break;
     	default:
     		break;
@@ -161,10 +166,16 @@ public class ULESActivity extends Activity {
     	Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }    
     
-//    public void requestMountKey(String randomKey){
-//    	Log.v(TAG+" requestMountKey", "random key: "+ randomKey);
-//    	
-//    }
+    
+    protected void showProgressDialog(){
+    	progressDialog = ProgressDialog.show(this, getResources().getString(R.string.processing_title), getResources().getString(R.string.processing_content));
+    }
+    
+    protected void dismissProgressDialog(){
+    	progressDialog.dismiss();
+    	progressDialog = null;
+    }
+    
     
     private void registerSMSReceiver(){
     	smsReceiver = new SMSReceiver(this);
@@ -178,18 +189,10 @@ public class ULESActivity extends Activity {
     }
     
     private void requestRandomKey(){
-//    	getSavedPassword();
     	Log.v(TAG, "request random key with username: "+username+" password: "+password);
     	
-    	if(username.equals("") || password.equals("")){
-    		// Pop up a input dialog requesting for username and password    		
-    		buildDialog();
-    	}else{
-//    		new AlertDialog.Builder(this).setTitle(username).show();
-    		String url = ((ULESApplication)getApplication()).getServerAddress() + "sendsms.jsp";
-    		deRequestRandomKey(url);
-    	}
-    	
+    	String url = ((ULESApplication)getApplication()).getServerAddress() + "sendsms.jsp";
+		deRequestRandomKey(url);
     }
     
     private void deRequestRandomKey(String url){
@@ -203,59 +206,11 @@ public class ULESActivity extends Activity {
     	getHandler().obtainMessage(R.id.request_random_key, data).sendToTarget();
     }
     
-    protected void showProgressDialog(){
-    	progressDialog = ProgressDialog.show(this, getResources().getString(R.string.processing_title), getResources().getString(R.string.processing_content));
+    private void showHelp(){
+    	new AlertDialog.Builder(this).setTitle(R.string.help_title)
+    								.setMessage(R.string.help_message)
+    								.setPositiveButton("OK", null)
+    								.show();
     }
-    
-    protected void dismissProgressDialog(){
-    	progressDialog.dismiss();
-    	progressDialog = null;
-    }
-
-    private void buildDialog(){
-    	Builder dialog = new AlertDialog.Builder(this);
-		LinearLayout layout = (LinearLayout) ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.input_dialog, null);
-		dialog.setView(layout);
-		et_username = (EditText) layout.findViewById(R.id.editText_username);
-		et_password = (EditText) layout.findViewById(R.id.editText_passowrd);
-		
-		dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {				
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		
-		dialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {				
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				username = et_username.getText().toString().trim();
-				password = et_password.getText().toString().trim();
-				Log.v(TAG, "username: "+username+" password: "+password);
-			}
-		});
-		dialog.show();
-    }    
-    
-    
-//  // Get the saved username and password
-//  private void getSavedPassword(){
-//  	Log.v(TAG, "getSavedPassword");
-//  	// Restore prederences
-//  	SharedPreferences sp = getSharedPreferences(SETTING_INFO, 0);
-//  	username = sp.getString(USERNAME, "");
-//  	password = sp.getString(PASSWORD, "");
-//  	Log.v(TAG+" getSavedPassword", "username: "+username+" password: "+password);
-//  }
-    
-    
-//  private void doRequestMountKey(String randomKey){
-//	Log.v(TAG,"doRequestMountKey");
-//	progressDialog = ProgressDialog.show(this, "Connecting to Server", "Please wait a second");
-//	
-//	final String url = ((ULESApplication)getApplication()).getServerAddress() + "mountkey";    	
-//}
     
 }

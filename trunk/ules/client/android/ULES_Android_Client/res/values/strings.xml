@@ -2,12 +2,15 @@
 <resources>
 	<!-- General -->
     <string name="hello">Hello World, ULESActivity!</string>
-    <string name="app_name">ULES</string> 
+    <string name="app_name">ULFE</string> 
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
     
     <!-- Tags or Button text -->
-    <string name="direction">Press the button below to request a random key from server. A SMS will be received a few seconds after a successful connection. The SMS will be read automatically by the app and finish the next few steps itself. Just Keep your mobile network working and wait a second.</string>
-    <string name="request_random_key">Request for Random Key</string>
-    <string name="transferring_pmk">Transferring Data To PC Client, Please wait...</string>
+    <string name="direction">Press the button below to send request to the web server. A SMS will be received a few seconds after a successful connection. The SMS will be read by the app and finish the next few steps automatically. Just keep your mobile network working and wait a second.</string>
+    <string name="request_random_key">Send Request</string>
+    <string name="transferring_pmk">Transferring Data To PC Client, Please wait..</string>
     <string name="processing_title">Processing</string>
     <string name="processing_content">It will transfer your mount key to the PC automatically. To protect your security, the application will quit by itself after transferring. </string>
     
@@ -25,5 +28,9 @@
     <string name="set_web_server_address">set_web_server_address</string>
     <string name="set_socket_server_address">set_socket_server_address</string>
     <string name="set_socket_server_port_number">set_socket_server_port_number</string>
+    
+    <!-- Help -->
+    <string name="help_title">Help</string>
+    <string name="help_message">Please visit our website for more information: http://147.8.82.145:8080/help.html</string>
     
 </resources>
